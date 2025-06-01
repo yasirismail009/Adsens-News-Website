@@ -17,7 +17,7 @@ const Home: React.FC = () => {
     const fetchNews = async () => {
       try {
         const response: NewsResponse = await fetchTopHeadlines();
-        setArticles(response.articles);
+        setArticles(response.results);
         setLoading(false);
       } catch (error) {
         if (error instanceof Error && error.message === 'News API configuration is missing') {

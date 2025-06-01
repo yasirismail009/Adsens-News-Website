@@ -15,11 +15,9 @@ const NewsSection: React.FC<NewsSectionProps> = ({ articles, loading, error }) =
   const { isDarkMode } = useTheme();
 
   const handleArticleClick = (article: NewsArticle) => {
-    // Pass article data through router state
-    const articleData = encodeURIComponent(JSON.stringify(article));
     router.push({
-      pathname: `/news/${article.url}`,
-      query: { article: articleData }
+      pathname: `/news/${encodeURIComponent(article.url)}`,
+      query: { article: encodeURIComponent(JSON.stringify(article)) }
     });
   };
 
@@ -55,18 +53,33 @@ const NewsSection: React.FC<NewsSectionProps> = ({ articles, loading, error }) =
                 }`}
                 onClick={() => handleArticleClick(article)}
               >
-                {article.urlToImage && (
+                {article.multimedia && article.multimedia.length > 0 && (
                   <div className="relative w-full h-48">
                     <Image
-                      src={article.urlToImage}
+                      src={article.multimedia[0].url}
                       alt={article.title}
                       fill
                       className="object-cover"
                       sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                     />
+                    {article.multimedia[0].caption && (
+                      <div className="absolute bottom-0 left-0 right-0 p-2 text-xs text-white bg-black bg-opacity-50">
+                        {article.multimedia[0].caption}
+                        {article.multimedia[0].copyright && (
+                          <span className="ml-2">© {article.multimedia[0].copyright}</span>
+                        )}
+                      </div>
+                    )}
                   </div>
                 )}
                 <div className="p-4">
+                  {article.kicker && (
+                    <span className={`text-sm font-semibold text-yellow-500 mb-2 block ${
+                      isDarkMode ? 'text-yellow-400' : 'text-yellow-600'
+                    }`}>
+                      {article.kicker}
+                    </span>
+                  )}
                   <h3 className={`text-xl font-semibold mb-2 ${
                     isDarkMode ? 'text-white' : 'text-gray-900'
                   }`}>
@@ -75,11 +88,29 @@ const NewsSection: React.FC<NewsSectionProps> = ({ articles, loading, error }) =
                   <p className={`mb-4 ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
                     {article.description?.substring(0, 150)}...
                   </p>
-                  <div className={`flex justify-between items-center text-sm ${
-                    isDarkMode ? 'text-gray-400' : 'text-gray-500'
-                  }`}>
-                    <span>{article.source.name}</span>
-                    <span>{new Date(article.publishedAt).toLocaleDateString()}</span>
+                  <div className="space-y-2">
+                    <div className={`flex flex-wrap gap-2 text-xs ${
+                      isDarkMode ? 'text-gray-400' : 'text-gray-500'
+                    }`}>
+                      {article.geo_facet && article.geo_facet.length > 0 && (
+                        <div className="flex items-center">
+                          <span className="mr-1">📍</span>
+                          {article.geo_facet.join(', ')}
+                        </div>
+                      )}
+                      {article.per_facet && article.per_facet.length > 0 && (
+                        <div className="flex items-center">
+                          <span className="mr-1">👤</span>
+                          {article.per_facet.join(', ')}
+                        </div>
+                      )}
+                    </div>
+                    <div className={`flex justify-between items-center text-sm ${
+                      isDarkMode ? 'text-gray-400' : 'text-gray-500'
+                    }`}>
+                      <span>{article.source}</span>
+                      <span>{new Date(article.published_at).toLocaleDateString()}</span>
+                    </div>
                   </div>
                 </div>
               </div>

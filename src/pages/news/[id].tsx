@@ -3,64 +3,150 @@ import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import Layout from '../../components/Layout';
 import { useTheme } from '../../contexts/ThemeContext';
-import Link from 'next/link';
 import Image from 'next/image';
 import SEO from '@/components/SEO';
-import { NewsArticle } from '../../services/newsService';
+
+interface NewsArticle {
+  // Common fields
+  title: string;
+  description: string;
+  url: string;
+  published_at: string;
+  source: string;
+  multimedia?: Array<{
+    url: string;
+    format?: string;
+    height: number;
+    width: number;
+    type?: string;
+    subtype?: string;
+    caption: string;
+    copyright?: string;
+  }>;
+  kicker?: string;
+  
+  // Top Stories API specific fields
+  uuid?: string;
+  categories?: string[];
+  section?: string;
+  subsection?: string;
+  byline?: string;
+  des_facet?: string[];
+  org_facet?: string[];
+  per_facet?: string[];
+  geo_facet?: string[];
+  item_type?: string;
+  updated_date?: string;
+  created_date?: string;
+
+  // Article Search API specific fields
+  abstract?: string;
+  web_url?: string;
+  headline?: {
+    main: string;
+    kicker?: string;
+    print_headline?: string;
+  };
+  pub_date?: string;
+  section_name?: string;
+  byline_original?: string;
+  snippet?: string;
+  keywords?: Array<{
+    name: string;
+    value: string;
+    rank: number;
+  }>;
+  news_desk?: string;
+  subsection_name?: string;
+  type_of_material?: string;
+  word_count?: number;
+  document_type?: string;
+  _id?: string;
+  uri?: string;
+}
 
 const NewsDetail = () => {
   const router = useRouter();
-  const { id } = router.query;
   const { isDarkMode } = useTheme();
   const [article, setArticle] = useState<NewsArticle | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const getArticleData = async () => {
-      if (!id) return;
-
+    // Check for article data in local storage first
+    const storedArticle = localStorage.getItem('currentArticle');
+    
+    if (storedArticle) {
       try {
-        // Try to get article from router state first
-        const stateArticle = router.query.article;
-        if (stateArticle) {
-          const decodedArticle = JSON.parse(decodeURIComponent(stateArticle as string));
-          setArticle(decodedArticle);
-          setLoading(false);
-          return;
-        }
-
-        // If not in router state, try localStorage
-        const storedArticles = localStorage.getItem('newsArticles');
-        if (storedArticles) {
-          const articles = JSON.parse(storedArticles);
-          // Decode the base64 ID to get the original URL
-          const originalUrl = Buffer.from(id as string, 'base64').toString();
-          const foundArticle = articles.find((a: NewsArticle) => a.url === originalUrl);
-          if (foundArticle) {
-            setArticle(foundArticle);
-            setLoading(false);
-            return;
-          }
-        }
-
-        setError('Article not found');
+        const parsedArticle = JSON.parse(storedArticle);
+        setArticle(parsedArticle);
+        setIsLoading(false);
       } catch (err) {
-        setError('Error loading article');
-        console.error('Error loading article:', err);
-      } finally {
-        setLoading(false);
+        setError('Failed to load article data');
+        setIsLoading(false);
       }
+    } else if (router.query.article) {
+      try {
+        const decodedArticle = JSON.parse(decodeURIComponent(router.query.article as string));
+        setArticle(decodedArticle);
+        // Save to local storage
+        localStorage.setItem('currentArticle', JSON.stringify(decodedArticle));
+        setIsLoading(false);
+      } catch (err) {
+        setError('Failed to load article data');
+        setIsLoading(false);
+      }
+    } else {
+      // No data available, redirect to news page
+      router.push('/news');
+    }
+
+    // Cleanup function to clear local storage when component unmounts
+    return () => {
+      localStorage.removeItem('currentArticle');
     };
+  }, [router.query, router]);
 
-    getArticleData();
-  }, [id, router.query]);
+  const handleBackClick = () => {
+    localStorage.removeItem('currentArticle');
+    router.push('/news');
+  };
 
-  if (loading) {
+  // Helper function to get article title
+  const getArticleTitle = (article: NewsArticle) => {
+    return article.headline?.main || article.title;
+  };
+
+  // Helper function to get article description
+  const getArticleDescription = (article: NewsArticle) => {
+    return article.abstract || article.description || article.snippet || '';
+  };
+
+  // Helper function to get article URL
+  const getArticleUrl = (article: NewsArticle) => {
+    return article.web_url || article.url;
+  };
+
+  // Helper function to get article date
+  const getArticleDate = (article: NewsArticle) => {
+    return article.pub_date || article.published_at;
+  };
+
+  // Helper function to get article author
+  const getArticleAuthor = (article: NewsArticle) => {
+    return article.byline_original || article.byline || article.source;
+  };
+
+  // Helper function to get article section
+  const getArticleSection = (article: NewsArticle) => {
+    return article.section_name || article.section || '';
+  };
+
+  if (isLoading) {
     return (
       <Layout>
-        <div className={`${isDarkMode ? 'bg-gray-900' : 'bg-gray-100'} py-5 transition-colors duration-200`}>
-          <div className="container mx-auto px-4 max-w-6xl">
+        <div className={`${isDarkMode ? 'bg-gray-900' : 'bg-gray-100'} min-h-screen py-5 transition-colors duration-200`}>
+          <div className="container mx-auto px-4 max-w-4xl">
             <div className="text-center">
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto"></div>
               <p className={`mt-4 ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>Loading article...</p>
@@ -74,13 +160,15 @@ const NewsDetail = () => {
   if (error || !article) {
     return (
       <Layout>
-        <div className={`${isDarkMode ? 'bg-gray-900' : 'bg-gray-100'} py-5 transition-colors duration-200`}>
-          <div className="container mx-auto px-4 max-w-6xl">
+        <div className={`${isDarkMode ? 'bg-gray-900' : 'bg-gray-100'} min-h-screen py-5 transition-colors duration-200`}>
+          <div className="container mx-auto px-4 max-w-4xl">
             <div className="text-center">
-              <p className={`text-red-500 ${isDarkMode ? 'text-red-400' : 'text-red-600'}`}>{error || 'Article not found'}</p>
+              <p className={`text-red-500 ${isDarkMode ? 'text-red-400' : 'text-red-600'}`}>
+                {error || 'Article not found'}
+              </p>
               <button
-                onClick={() => router.push('/news')}
-                className={`mt-4 ${isDarkMode ? 'bg-blue-600 hover:bg-blue-700' : 'bg-blue-600 hover:bg-blue-700'} text-white font-medium text-xs py-1.5 px-4 rounded-sm transition-colors`}
+                onClick={handleBackClick}
+                className={`mt-4 ${isDarkMode ? 'bg-blue-600 hover:bg-blue-700' : 'bg-blue-600 hover:bg-blue-700'} text-white font-medium text-sm py-2 px-4 rounded-md transition-colors`}
               >
                 Back to News
               </button>
@@ -94,91 +182,151 @@ const NewsDetail = () => {
   return (
     <>
       <SEO
-        title={article.title}
-        description={article.description || ''}
-        ogImage={article.urlToImage || undefined}
-        ogUrl={article.url}
+        title={getArticleTitle(article)}
+        description={getArticleDescription(article)}
+        ogImage={article.multimedia?.[0]?.url}
+        ogUrl={getArticleUrl(article)}
         ogType="article"
-        keywords={`scholarships, education, news, ${article.source.name}`}
-        articlePublishedTime={article.publishedAt}
-        articleModifiedTime={article.publishedAt}
-        articleAuthor={article.author || 'Global Scholarships'}
-        articleSection="Education News"
-        articleTag={[
-          'scholarships',
-          'education',
-          'news',
-          article.source.name,
-          ...(article.title.toLowerCase().split(' ').filter(word => word.length > 3))
-        ]}
+        keywords={`${getArticleSection(article)}, ${article.keywords?.map(k => k.value).join(', ') || ''}`}
+        articlePublishedTime={getArticleDate(article)}
+        articleModifiedTime={getArticleDate(article)}
+        articleAuthor={getArticleAuthor(article)}
+        articleSection={getArticleSection(article)}
+        articleTag={article.keywords?.map(k => k.value) || []}
       />
       <Layout>
-        <div className={`${isDarkMode ? 'bg-gray-900' : 'bg-gray-100'} py-5 transition-colors duration-200`}>
-          <div className="container mx-auto px-4 max-w-6xl">
-            <div className="mb-4">
-              <Link 
-                href="/news" 
-                className={`${isDarkMode ? 'text-blue-400 hover:text-blue-300' : 'text-blue-600 hover:text-blue-800'} text-xs font-medium flex items-center transition-colors`}
-              >
-                <svg className="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                </svg>
-                Back to News
-              </Link>
-            </div>
+        <div className={`${isDarkMode ? 'bg-gray-900' : 'bg-gray-100'} min-h-screen py-5 transition-colors duration-200`}>
+          <div className="container mx-auto px-4 max-w-4xl">
+            <button
+              onClick={handleBackClick}
+              className={`mb-6 ${isDarkMode ? 'text-blue-400 hover:text-blue-300' : 'text-blue-600 hover:text-blue-800'} text-sm font-medium transition-colors`}
+            >
+              ← Back to News
+            </button>
 
-            <article className={`${isDarkMode ? 'bg-gray-800' : 'bg-white'} rounded-lg shadow-sm p-6 transition-colors duration-200`}>
-              <div className="mb-6">
-                <div className="flex items-center space-x-4 mb-4">
-                  <span className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                    {article.source.name}
-                  </span>
-                  <span className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                    {new Date(article.publishedAt).toLocaleDateString()}
-                  </span>
-                  {article.author && (
-                    <span className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                      By {article.author}
-                    </span>
-                  )}
-                </div>
-                <h1 className={`text-3xl font-bold ${isDarkMode ? 'text-white' : 'text-gray-800'} mb-4`}>
-                  {article.title}
-                </h1>
-                {article.description && (
-                  <p className={`text-lg ${isDarkMode ? 'text-gray-300' : 'text-gray-600'} mb-6`}>
-                    {article.description}
-                  </p>
-                )}
-              </div>
-
-              {article.urlToImage && (
-                <div className="relative h-64 w-full mb-6">
+            <article className={`${isDarkMode ? 'bg-gray-800' : 'bg-white'} rounded-lg shadow-md overflow-hidden transition-colors duration-200`}>
+              {article.multimedia?.[0]?.url && (
+                <div className="relative w-full h-96">
                   <Image
-                    src={article.urlToImage}
-                    alt={article.title}
+                    src={article.multimedia[0].url}
+                    alt={article.multimedia[0].caption || getArticleTitle(article)}
                     fill
-                    className="object-cover rounded-lg"
+                    className="object-cover"
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                     priority
                   />
+                  {article.multimedia[0].caption && (
+                    <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white p-4">
+                      <p className="text-sm">{article.multimedia[0].caption}</p>
+                      {article.multimedia[0].copyright && (
+                        <p className="text-xs mt-1">{article.multimedia[0].copyright}</p>
+                      )}
+                    </div>
+                  )}
                 </div>
               )}
 
-              <div className={`prose ${isDarkMode ? 'prose-invert' : ''} max-w-none`}>
-                <p className={`${isDarkMode ? 'text-gray-300' : 'text-gray-600'} text-base leading-relaxed`}>
-                  {article.content}
-                </p>
-              </div>
+              <div className="p-6">
+                {(article.kicker || article.headline?.kicker) && (
+                  <p className={`text-sm font-medium mb-2 ${
+                    isDarkMode ? 'text-blue-400' : 'text-blue-600'
+                  }`}>
+                    {article.headline?.kicker || article.kicker}
+                  </p>
+                )}
 
-              <div className="mt-8">
-                <a
-                  href={article.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={`inline-block ${isDarkMode ? 'bg-blue-600 hover:bg-blue-700' : 'bg-blue-600 hover:bg-blue-700'} text-white font-medium text-sm py-2 px-4 rounded-sm transition-colors`}
-                >
-                  Read Full Article
-                </a>
+                <h1 className={`text-3xl font-bold mb-4 ${
+                  isDarkMode ? 'text-white' : 'text-gray-900'
+                }`}>
+                  {getArticleTitle(article)}
+                </h1>
+
+                {getArticleAuthor(article) && (
+                  <p className={`text-sm mb-4 ${
+                    isDarkMode ? 'text-gray-300' : 'text-gray-600'
+                  }`}>
+                    {getArticleAuthor(article)}
+                  </p>
+                )}
+
+                <div className="flex items-center gap-4 mb-6 text-sm">
+                  <span className={`${
+                    isDarkMode ? 'text-gray-400' : 'text-gray-500'
+                  }`}>
+                    {new Date(getArticleDate(article)).toLocaleDateString()}
+                  </span>
+                  <span className={`${
+                    isDarkMode ? 'text-gray-400' : 'text-gray-500'
+                  }`}>
+                    {getArticleSection(article)}
+                  </span>
+                  {article.word_count && (
+                    <span className={`${
+                      isDarkMode ? 'text-gray-400' : 'text-gray-500'
+                    }`}>
+                      {article.word_count} words
+                    </span>
+                  )}
+                </div>
+
+                <div className={`prose ${isDarkMode ? 'prose-invert' : ''} max-w-none`}>
+                  <p className={`text-lg mb-6 ${
+                    isDarkMode ? 'text-gray-300' : 'text-gray-700'
+                  }`}>
+                    {getArticleDescription(article)}
+                  </p>
+                </div>
+
+                {(article.keywords || article.categories) && (
+                  <div className="mt-8 pt-6 border-t border-gray-200 dark:border-gray-700">
+                    <h2 className={`text-lg font-semibold mb-3 ${
+                      isDarkMode ? 'text-white' : 'text-gray-900'
+                    }`}>
+                      Topics
+                    </h2>
+                    <div className="flex flex-wrap gap-2">
+                      {article.keywords?.map((keyword, index) => (
+                        <span
+                          key={index}
+                          className={`px-3 py-1 rounded-full text-sm ${
+                            isDarkMode 
+                              ? 'bg-gray-700 text-gray-300' 
+                              : 'bg-gray-100 text-gray-700'
+                          }`}
+                        >
+                          {keyword.value}
+                        </span>
+                      ))}
+                      {article.categories?.map((category, index) => (
+                        <span
+                          key={index}
+                          className={`px-3 py-1 rounded-full text-sm ${
+                            isDarkMode 
+                              ? 'bg-gray-700 text-gray-300' 
+                              : 'bg-gray-100 text-gray-700'
+                          }`}
+                        >
+                          {category}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                <div className="mt-8 pt-6 border-t border-gray-200 dark:border-gray-700">
+                  <a
+                    href={getArticleUrl(article)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={`inline-block ${
+                      isDarkMode 
+                        ? 'bg-blue-600 hover:bg-blue-700' 
+                        : 'bg-blue-600 hover:bg-blue-700'
+                    } text-white font-medium px-6 py-3 rounded-md transition-colors`}
+                  >
+                    Read Full Article on NYT
+                  </a>
+                </div>
               </div>
             </article>
           </div>

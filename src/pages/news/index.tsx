@@ -1,69 +1,191 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import Layout from '../../components/Layout';
 import { useTheme } from '../../contexts/ThemeContext';
 import { useRouter } from 'next/router';
 import Image from 'next/image';
 
 interface NewsArticle {
-  source: {
-    id: string | null;
-    name: string;
-  };
-  author: string | null;
+  // Common fields
   title: string;
-  description: string | null;
+  description: string;
   url: string;
-  urlToImage: string | null;
-  publishedAt: string;
-  content: string | null;
+  published_at: string;
+  source: string;
+  multimedia?: Array<{
+    url: string;
+    format?: string;
+    height: number;
+    width: number;
+    type?: string;
+    subtype?: string;
+    caption: string;
+    copyright?: string;
+  }>;
+  kicker?: string;
+  
+  // Top Stories API specific fields
+  uuid?: string;
+  categories?: string[];
+  section?: string;
+  subsection?: string;
+  byline?: string;
+  des_facet?: string[];
+  org_facet?: string[];
+  per_facet?: string[];
+  geo_facet?: string[];
+  item_type?: string;
+  updated_date?: string;
+  created_date?: string;
+
+  // Article Search API specific fields
+  abstract?: string;
+  web_url?: string;
+  headline?: {
+    main: string;
+    kicker?: string;
+    print_headline?: string;
+  };
+  pub_date?: string;
+  section_name?: string;
+  byline_original?: string;
+  snippet?: string;
+  keywords?: Array<{
+    name: string;
+    value: string;
+    rank: number;
+  }>;
+  news_desk?: string;
+  subsection_name?: string;
+  type_of_material?: string;
+  word_count?: number;
+  document_type?: string;
+  _id?: string;
+  uri?: string;
 }
 
 export default function NewsPage() {
   const { isDarkMode } = useTheme();
   const router = useRouter();
   const [articles, setArticles] = useState<NewsArticle[]>([]);
-  const [searchQuery, setSearchQuery] = useState('bitcoin');
-  const [inputValue, setInputValue] = useState('bitcoin');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [inputValue, setInputValue] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [offset, setOffset] = useState(0);
+  const [hasMore, setHasMore] = useState(true);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const observer = useRef<IntersectionObserver | null>(null);
+  const LIMIT = 10;
+  const API_KEY = '0Xn3xkJ3eaMFx4l0tofdsWFLseOz9ok7';
+
+  const lastArticleElementRef = useCallback((node: HTMLDivElement | null) => {
+    if (isLoadingMore) return;
+    if (observer.current) observer.current.disconnect();
+    observer.current = new IntersectionObserver(entries => {
+      if (entries[0].isIntersecting && hasMore) {
+        setOffset(prevOffset => prevOffset + LIMIT);
+      }
+    });
+    if (node) observer.current.observe(node);
+  }, [isLoadingMore, hasMore]);
+
+  const fetchNews = async (currentOffset: number, isNewSearch: boolean = false) => {
+    try {
+      if (isNewSearch) {
+        setIsLoading(true);
+      } else {
+        setIsLoadingMore(true);
+      }
+
+      const url = `https://api.nytimes.com/svc/search/v2/articlesearch.json?q=${searchQuery}&api-key=${API_KEY}&page=${currentOffset}`;
+      
+      const response = await fetch(url);
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch news articles');
+      }
+      
+      const data = await response.json();
+      const newArticles = data.response.docs.map((article: any) => ({
+        title: article.headline.main,
+        description: article.abstract,
+        url: article.web_url,
+        published_at: article.pub_date,
+        source: article.source,
+        multimedia: article.multimedia ? [{
+          url: article.multimedia.thumbnail?.url || '',
+          height: article.multimedia.thumbnail?.height || 0,
+          width: article.multimedia.thumbnail?.width || 0,
+          caption: article.multimedia?.caption || '',
+          copyright: article.multimedia?.credit || ''
+        }] : undefined,
+        kicker: article.headline.kicker,
+        abstract: article.abstract,
+        web_url: article.web_url,
+        headline: article.headline,
+        pub_date: article.pub_date,
+        section_name: article.section_name,
+        byline_original: article.byline?.original,
+        snippet: article.snippet,
+        keywords: article.keywords,
+        news_desk: article.news_desk,
+        subsection_name: article.subsection_name,
+        type_of_material: article.type_of_material,
+        word_count: article.word_count,
+        document_type: article.document_type,
+        _id: article._id,
+        uri: article.uri
+      }));
+      
+      if (isNewSearch) {
+        setArticles(newArticles);
+      } else {
+        setArticles(prevArticles => [...prevArticles, ...newArticles]);
+      }
+      
+      setHasMore(newArticles.length === LIMIT);
+      setIsLoading(false);
+      setIsLoadingMore(false);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'An error occurred');
+      setIsLoading(false);
+      setIsLoadingMore(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchNews = async () => {
-      try {
-        setIsLoading(true);
-        const url = searchQuery.trim() 
-          ? `https://newsapi.org/v2/everything?q=${searchQuery}&apiKey=313971675a154a8f997840d98c7ebdf7`
-          : `https://newsapi.org/v2/everything?apiKey=313971675a154a8f997840d98c7ebdf7`;
-        
-        const response = await fetch(url);
-        
-        if (!response.ok) {
-          throw new Error('Failed to fetch news articles');
-        }
-        
-        const data = await response.json();
-        setArticles(data.articles);
-        setIsLoading(false);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'An error occurred');
-        setIsLoading(false);
-      }
-    };
-
-    fetchNews();
+    setOffset(0);
+    fetchNews(0, true);
   }, [searchQuery]);
+
+  useEffect(() => {
+    if (offset > 0) {
+      fetchNews(offset);
+    }
+  }, [offset]);
 
   const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (inputValue.trim()) {
       setSearchQuery(inputValue);
+      setOffset(0);
+      setHasMore(true);
     }
   };
 
   const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter' && inputValue.trim()) {
       setSearchQuery(inputValue);
+      setOffset(0);
+      setHasMore(true);
     }
+  };
+
+  const handleArticleClick = (article: NewsArticle) => {
+    router.push({
+      pathname: `/news/${encodeURIComponent(article.web_url || article.url)}`,
+      query: { article: encodeURIComponent(JSON.stringify(article)) }
+    });
   };
 
   if (isLoading) {
@@ -100,14 +222,6 @@ export default function NewsPage() {
       </Layout>
     );
   }
-  const handleArticleClick = (article: NewsArticle) => {
-    // Store the article data in router state
-    const encodedArticle = encodeURIComponent(JSON.stringify(article));
-    router.push({
-      pathname: `/news/${encodeURIComponent(article.url)}`,
-      query: { article: encodedArticle }
-    });
-  };
 
   return (
     <Layout>
@@ -147,58 +261,76 @@ export default function NewsPage() {
             </div>
           </form>
 
-          <div className="mb-4">
-            <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-              Powered by <a href="https://newsapi.org" target="_blank" rel="noopener noreferrer" className="underline">News API</a>
-            </p>
-          </div>
-
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {articles.map((article, index) => (
               <article
-                key={index}
+                key={article.web_url || article.url || index}
+                ref={index === articles.length - 1 ? lastArticleElementRef : null}
+                onClick={() => handleArticleClick(article)}
                 className={`${
                   isDarkMode ? 'bg-gray-800' : 'bg-white'
-                } rounded-lg shadow-md overflow-hidden transition-colors duration-200`}
+                } rounded-lg shadow-md overflow-hidden transition-colors duration-200 cursor-pointer`}
               >
-                {article.urlToImage && (
+                {article.multimedia?.[0]?.url && (
                   <div className="relative w-full h-48">
                     <Image
-                      src={article.urlToImage}
-                      alt={article.title}
+                      src={article.multimedia[0].url}
+                      alt={article.multimedia[0].caption || article.title}
                       fill
                       className="object-cover"
                       sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                     />
+                    {article.multimedia[0].caption && (
+                      <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white p-2">
+                        <p className="text-xs">{article.multimedia[0].caption}</p>
+                        {article.multimedia[0].copyright && (
+                          <p className="text-xs mt-1 opacity-75">{article.multimedia[0].copyright}</p>
+                        )}
+                      </div>
+                    )}
                   </div>
                 )}
+                
                 <div className="p-4">
+                  {(article.kicker || article.headline?.kicker) && (
+                    <p className={`text-sm font-medium mb-1 ${
+                      isDarkMode ? 'text-blue-400' : 'text-blue-600'
+                    }`}>
+                      {article.headline?.kicker || article.kicker}
+                    </p>
+                  )}
                   <h2 className={`text-lg font-semibold mb-2 ${
                     isDarkMode ? 'text-white' : 'text-gray-800'
                   }`}>
-                    {article.title}
+                    {article.headline?.main || article.title}
                   </h2>
-                  {article.description && (
+                  {(article.abstract || article.description) && (
                     <p className={`text-sm mb-4 ${
                       isDarkMode ? 'text-gray-300' : 'text-gray-600'
                     }`}>
-                      {article.description}
+                      {article.abstract || article.description}
                     </p>
                   )}
                   <div className="flex justify-between items-center text-xs">
                     <span className={`${
                       isDarkMode ? 'text-gray-400' : 'text-gray-500'
                     }`}>
-                      {article.source.name}
+                      {article.section_name || article.section}
                     </span>
                     <span className={`${
                       isDarkMode ? 'text-gray-400' : 'text-gray-500'
                     }`}>
-                      {new Date(article.publishedAt).toLocaleDateString()}
+                      {new Date(article.pub_date || article.published_at).toLocaleDateString()}
                     </span>
                   </div>
+                  {(article.byline_original || article.byline) && (
+                    <p className={`text-xs mt-2 ${
+                      isDarkMode ? 'text-gray-400' : 'text-gray-500'
+                    }`}>
+                      {article.byline_original || article.byline}
+                    </p>
+                  )}
                   <button
-                    onClick={() => handleArticleClick(article)}
                     className={`mt-4 inline-block ${
                       isDarkMode 
                         ? 'text-blue-400 hover:text-blue-300' 
@@ -212,7 +344,20 @@ export default function NewsPage() {
             ))}
           </div>
 
-          {articles.length === 0 && (
+          {isLoadingMore && (
+            <div className="text-center mt-6">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto"></div>
+              <p className={`mt-2 text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>Loading more articles...</p>
+            </div>
+          )}
+
+          {!hasMore && articles.length > 0 && (
+            <div className={`text-center mt-6 ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+              No more articles to load
+            </div>
+          )}
+
+          {articles.length === 0 && !isLoading && (
             <div className={`${
               isDarkMode ? 'bg-gray-800' : 'bg-white'
             } rounded-md shadow-sm p-6 text-center transition-colors duration-200`}>

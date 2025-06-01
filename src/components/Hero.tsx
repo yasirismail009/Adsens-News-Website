@@ -3,17 +3,34 @@ import { useRouter } from 'next/router';
 import Image from 'next/image';
 
 interface NewsArticle {
-  source: {
-    id: string | null;
-    name: string;
-  };
-  author: string | null;
+  uuid: string;
   title: string;
-  description: string | null;
+  description: string;
   url: string;
-  urlToImage: string | null;
-  publishedAt: string;
-  content: string | null;
+  published_at: string;
+  source: string;
+  categories: string[];
+  section?: string;
+  subsection?: string;
+  byline?: string;
+  multimedia?: Array<{
+    url: string;
+    format: string;
+    height: number;
+    width: number;
+    type: string;
+    subtype: string;
+    caption: string;
+    copyright: string;
+  }>;
+  des_facet?: string[];
+  org_facet?: string[];
+  per_facet?: string[];
+  geo_facet?: string[];
+  kicker?: string;
+  item_type?: string;
+  updated_date?: string;
+  created_date?: string;
 }
 
 interface HeroProps {
@@ -29,14 +46,36 @@ const Hero: React.FC<HeroProps> = ({ isDarkMode = false }) => {
   useEffect(() => {
     const fetchNews = async () => {
       try {
-        const response = await fetch('https://newsapi.org/v2/top-headlines?country=us&apiKey=313971675a154a8f997840d98c7ebdf7');
+        const response = await fetch('https://api.nytimes.com/svc/topstories/v2/world.json?api-key=0Xn3xkJ3eaMFx4l0tofdsWFLseOz9ok7');
         const data = await response.json();
         
-        if (data.articles && data.articles.length > 0) {
-          setMainArticle(data.articles[0]);
-          setSecondaryArticles(data.articles.slice(1, 4));
-          // Store articles in localStorage
-          localStorage.setItem('newsArticles', JSON.stringify(data.articles));
+        if (data.results && data.results.length > 0) {
+          // Transform the data to match our interface
+          const transformedArticles = data.results.map((article: any) => ({
+            uuid: article.uri || article.url,
+            title: article.title,
+            description: article.abstract,
+            url: article.url,
+            published_at: article.published_date,
+            source: article.byline || 'The New York Times',
+            categories: article.des_facet || [],
+            section: article.section,
+            subsection: article.subsection,
+            byline: article.byline,
+            multimedia: article.multimedia,
+            des_facet: article.des_facet,
+            org_facet: article.org_facet,
+            per_facet: article.per_facet,
+            geo_facet: article.geo_facet,
+            kicker: article.kicker,
+            item_type: article.item_type,
+            updated_date: article.updated_date,
+            created_date: article.created_date
+          }));
+
+          setMainArticle(transformedArticles[0]);
+          setSecondaryArticles(transformedArticles.slice(1, 4));
+          localStorage.setItem('newsArticles', JSON.stringify(transformedArticles));
         }
       } catch (error) {
         console.error('Error fetching news:', error);
@@ -50,12 +89,9 @@ const Hero: React.FC<HeroProps> = ({ isDarkMode = false }) => {
 
   const handleArticleClick = (article: NewsArticle) => {
     // Create a unique ID from the article URL
-    const articleId = Buffer.from(article.url).toString('base64');
-    // Pass article data through router state
-    const articleData = encodeURIComponent(JSON.stringify(article));
     router.push({
-      pathname: `/news/${articleId}`,
-      query: { article: articleData }
+      pathname: `/news/${encodeURIComponent(article.url)}`,
+      query: { article: encodeURIComponent(JSON.stringify(article)) }
     });
   };
 
@@ -75,18 +111,31 @@ const Hero: React.FC<HeroProps> = ({ isDarkMode = false }) => {
           onClick={() => handleArticleClick(mainArticle)}
         >
           <div className={`relative h-[400px] rounded-lg overflow-hidden ${isDarkMode ? 'bg-gray-800' : 'bg-white'} shadow-md`}>
-            {mainArticle.urlToImage && (
+            {mainArticle.multimedia && mainArticle.multimedia.length > 0 && (
               <div className="relative w-full h-full">
                 <Image
-                  src={mainArticle.urlToImage}
+                  src={mainArticle.multimedia[0].url}
                   alt={mainArticle.title}
                   fill
                   className="object-cover"
                   sizes="(max-width: 768px) 100vw, 50vw"
                 />
+                {mainArticle.multimedia[0].caption && (
+                  <div className="absolute bottom-0 left-0 right-0 p-2 text-xs text-white bg-black bg-opacity-50">
+                    {mainArticle.multimedia[0].caption}
+                    {mainArticle.multimedia[0].copyright && (
+                      <span className="ml-2">© {mainArticle.multimedia[0].copyright}</span>
+                    )}
+                  </div>
+                )}
               </div>
             )}
             <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black to-transparent">
+              {mainArticle.kicker && (
+                <span className="text-sm font-semibold text-yellow-400 mb-2 block">
+                  {mainArticle.kicker}
+                </span>
+              )}
               <h2 className={`text-2xl font-bold mb-2 ${isDarkMode ? 'text-white' : 'text-white'}`}>
                 {mainArticle.title}
               </h2>
@@ -94,9 +143,15 @@ const Hero: React.FC<HeroProps> = ({ isDarkMode = false }) => {
                 {mainArticle.description}
               </p>
               <div className="flex items-center mt-2 text-xs text-gray-300">
-                <span>{mainArticle.source.name}</span>
+                <span>{mainArticle.source}</span>
                 <span className="mx-2">•</span>
-                <span>{new Date(mainArticle.publishedAt).toLocaleDateString()}</span>
+                <span>{new Date(mainArticle.published_at).toLocaleDateString()}</span>
+                {mainArticle.geo_facet && mainArticle.geo_facet.length > 0 && (
+                  <>
+                    <span className="mx-2">•</span>
+                    <span>{mainArticle.geo_facet.join(', ')}</span>
+                  </>
+                )}
               </div>
             </div>
           </div>
@@ -111,10 +166,10 @@ const Hero: React.FC<HeroProps> = ({ isDarkMode = false }) => {
             onClick={() => handleArticleClick(article)}
           >
             <div className="flex h-32">
-              {article.urlToImage && (
+              {article.multimedia && article.multimedia.length > 0 && (
                 <div className="w-1/3 relative">
                   <Image
-                    src={article.urlToImage}
+                    src={article.multimedia[0].url}
                     alt={article.title}
                     fill
                     className="object-cover"
@@ -123,13 +178,24 @@ const Hero: React.FC<HeroProps> = ({ isDarkMode = false }) => {
                 </div>
               )}
               <div className="flex-1 p-4">
+                {article.kicker && (
+                  <span className="text-xs font-semibold text-yellow-400 mb-1 block">
+                    {article.kicker}
+                  </span>
+                )}
                 <h3 className={`text-sm font-semibold mb-1 ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>
                   {article.title}
                 </h3>
                 <div className="flex items-center text-xs text-gray-500">
-                  <span>{article.source.name}</span>
+                  <span>{article.source}</span>
                   <span className="mx-1">•</span>
-                  <span>{new Date(article.publishedAt).toLocaleDateString()}</span>
+                  <span>{new Date(article.published_at).toLocaleDateString()}</span>
+                  {article.geo_facet && article.geo_facet.length > 0 && (
+                    <>
+                      <span className="mx-1">•</span>
+                      <span>{article.geo_facet[0]}</span>
+                    </>
+                  )}
                 </div>
               </div>
             </div>
