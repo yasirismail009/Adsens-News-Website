@@ -63,6 +63,44 @@ interface NewsArticle {
   uri?: string;
 }
 
+interface NYTArticleSearch {
+  headline: {
+    main: string;
+    kicker?: string;
+    print_headline?: string;
+  };
+  abstract: string;
+  web_url: string;
+  pub_date: string;
+  source: string;
+  multimedia?: {
+    thumbnail?: {
+      url: string;
+      height: number;
+      width: number;
+    };
+    caption?: string;
+    credit?: string;
+  };
+  byline?: {
+    original?: string;
+  };
+  section_name?: string;
+  snippet?: string;
+  keywords?: Array<{
+    name: string;
+    value: string;
+    rank: number;
+  }>;
+  news_desk?: string;
+  subsection_name?: string;
+  type_of_material?: string;
+  word_count?: number;
+  document_type?: string;
+  _id: string;
+  uri: string;
+}
+
 export default function NewsPage() {
   const { isDarkMode } = useTheme();
   const router = useRouter();
@@ -89,7 +127,7 @@ export default function NewsPage() {
     if (node) observer.current.observe(node);
   }, [isLoadingMore, hasMore]);
 
-  const fetchNews = async (currentOffset: number, isNewSearch: boolean = false) => {
+  const fetchNews = useCallback(async (currentOffset: number, isNewSearch: boolean = false) => {
     try {
       if (isNewSearch) {
         setIsLoading(true);
@@ -106,7 +144,7 @@ export default function NewsPage() {
       }
       
       const data = await response.json();
-      const newArticles = data.response.docs.map((article: any) => ({
+      const newArticles = data.response.docs.map((article: NYTArticleSearch) => ({
         title: article.headline.main,
         description: article.abstract,
         url: article.web_url,
@@ -116,8 +154,8 @@ export default function NewsPage() {
           url: article.multimedia.thumbnail?.url || '',
           height: article.multimedia.thumbnail?.height || 0,
           width: article.multimedia.thumbnail?.width || 0,
-          caption: article.multimedia?.caption || '',
-          copyright: article.multimedia?.credit || ''
+          caption: article.multimedia.caption || '',
+          copyright: article.multimedia.credit || ''
         }] : undefined,
         kicker: article.headline.kicker,
         abstract: article.abstract,
@@ -151,18 +189,18 @@ export default function NewsPage() {
       setIsLoading(false);
       setIsLoadingMore(false);
     }
-  };
+  }, [searchQuery, API_KEY, LIMIT]);
 
   useEffect(() => {
     setOffset(0);
     fetchNews(0, true);
-  }, [searchQuery]);
+  }, [searchQuery, fetchNews]);
 
   useEffect(() => {
     if (offset > 0) {
       fetchNews(offset);
     }
-  }, [offset]);
+  }, [offset, fetchNews]);
 
   const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();

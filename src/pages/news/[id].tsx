@@ -81,7 +81,7 @@ const NewsDetail = () => {
         const parsedArticle = JSON.parse(storedArticle);
         setArticle(parsedArticle);
         setIsLoading(false);
-      } catch (err) {
+      } catch {
         setError('Failed to load article data');
         setIsLoading(false);
       }
@@ -92,7 +92,7 @@ const NewsDetail = () => {
         // Save to local storage
         localStorage.setItem('currentArticle', JSON.stringify(decodedArticle));
         setIsLoading(false);
-      } catch (err) {
+      } catch {
         setError('Failed to load article data');
         setIsLoading(false);
       }

@@ -2,6 +2,35 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import Image from 'next/image';
 
+interface NYTArticle {
+  uri?: string;
+  url: string;
+  title: string;
+  abstract: string;
+  published_date: string;
+  byline?: string;
+  des_facet?: string[];
+  section?: string;
+  subsection?: string;
+  multimedia?: Array<{
+    url: string;
+    format: string;
+    height: number;
+    width: number;
+    type: string;
+    subtype: string;
+    caption: string;
+    copyright: string;
+  }>;
+  org_facet?: string[];
+  per_facet?: string[];
+  geo_facet?: string[];
+  kicker?: string;
+  item_type?: string;
+  updated_date?: string;
+  created_date?: string;
+}
+
 interface NewsArticle {
   uuid: string;
   title: string;
@@ -51,7 +80,7 @@ const Hero: React.FC<HeroProps> = ({ isDarkMode = false }) => {
         
         if (data.results && data.results.length > 0) {
           // Transform the data to match our interface
-          const transformedArticles = data.results.map((article: any) => ({
+          const transformedArticles = data.results.map((article: NYTArticle) => ({
             uuid: article.uri || article.url,
             title: article.title,
             description: article.abstract,
