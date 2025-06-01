@@ -19,8 +19,12 @@ const Home: React.FC = () => {
         const response: NewsResponse = await fetchTopHeadlines();
         setArticles(response.articles);
         setLoading(false);
-      } catch {
-        setError('Failed to fetch news articles. Please try again later.');
+      } catch (error) {
+        if (error instanceof Error && error.message === 'News API configuration is missing') {
+          setError('News API configuration is missing. Please check your environment variables.');
+        } else {
+          setError('Failed to fetch news articles. Please try again later.');
+        }
         setLoading(false);
       }
     };
