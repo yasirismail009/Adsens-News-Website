@@ -1,3 +1,4 @@
+import React from 'react';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import Layout from '../../components/Layout';
@@ -5,20 +6,7 @@ import { useTheme } from '../../contexts/ThemeContext';
 import Link from 'next/link';
 import Image from 'next/image';
 import SEO from '@/components/SEO';
-
-interface NewsArticle {
-  source: {
-    id: string | null;
-    name: string;
-  };
-  author: string | null;
-  title: string;
-  description: string | null;
-  url: string;
-  urlToImage: string | null;
-  publishedAt: string;
-  content: string | null;
-}
+import { NewsArticle } from '../../services/newsService';
 
 const NewsDetail = () => {
   const router = useRouter();
@@ -165,11 +153,13 @@ const NewsDetail = () => {
               </div>
 
               {article.urlToImage && (
-                <div className="relative w-full h-[400px] mb-6 rounded-lg overflow-hidden">
-                  <img
+                <div className="relative h-64 w-full mb-6">
+                  <Image
                     src={article.urlToImage}
                     alt={article.title}
-                    className="w-full h-full object-cover"
+                    fill
+                    className="object-cover rounded-lg"
+                    priority
                   />
                 </div>
               )}

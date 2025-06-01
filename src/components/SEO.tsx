@@ -32,6 +32,7 @@ const SEO: React.FC<SEOProps> = ({
   const siteTitle = 'Global Scholarships - Latest News and Updates';
   const fullTitle = `${title} | ${siteTitle}`;
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://globalscholarships.com';
+  const twitterHandle = process.env.NEXT_PUBLIC_TWITTER_HANDLE || '@GlobalScholarships';
 
   // Generate structured data for news articles
   const structuredData = ogType === 'article' ? {
@@ -96,8 +97,8 @@ const SEO: React.FC<SEOProps> = ({
       <meta name="twitter:title" content={fullTitle} />
       <meta name="twitter:description" content={description} />
       {ogImage && <meta name="twitter:image" content={ogImage} />}
-      <meta name="twitter:site" content="@GlobalScholarships" />
-      <meta name="twitter:creator" content="@GlobalScholarships" />
+      <meta name="twitter:site" content={twitterHandle} />
+      <meta name="twitter:creator" content={twitterHandle} />
 
       {/* Additional Meta Tags */}
       <meta name="robots" content="index, follow" />

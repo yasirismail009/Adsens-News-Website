@@ -4,22 +4,24 @@ export interface Scholarship {
   description: string;
   financial_benefits: string;
   deadline: string;
-  eligibility: string[];
-  website_url: string;
-  source_website: string;
-  host_country: string;
   degree_level: string;
-  number_of_scholarships: string;
-  results_date: string;
-  benefits: Record<string, any>;
-  duration: Record<string, any>;
-  study_programs: string[];
+  host_country: string;
+  number_of_scholarships: number;
+  source_website: string;
+  website_url: string;
+  updated_at: string;
+  eligibility: string[];
   required_documents: string[];
   application_process: string[];
-  additional_info: Record<string, any>;
-  created_at: string;
-  updated_at: string;
-  is_active: boolean;
+  additional_info?: {
+    [key: string]: string | number | boolean;
+  };
+  tags?: string[];
+  contact_info?: {
+    email?: string;
+    phone?: string;
+    address?: string;
+  };
 }
 
 export interface ScholarshipListResponse {

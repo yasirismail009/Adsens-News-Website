@@ -18,57 +18,51 @@ export default function PrivacyPolicy() {
                 Google AdSense
               </h2>
               <p className="mb-4">
-                We use Google AdSense to display advertisements on our website. Google AdSense uses cookies to serve ads based on your prior visits to our website and other sites. You can opt out of personalized advertising by visiting Google's Ads Settings page.
+                We use Google AdSense to display advertisements on our website. Google AdSense uses cookies to serve ads based on your prior visits to our website and other sites. You can opt out of personalized advertising by visiting Google&apos;s Ads Settings page.
               </p>
               <p>
-                Google's use of advertising cookies enables it and its partners to serve ads to you based on your visit to our site and/or other sites on the internet. You may opt out of personalized advertising by visiting Ads Settings.
+                Google&apos;s use of advertising cookies enables it and its partners to serve ads to you based on your visit to our site and/or other sites on the internet. You may opt out of personalized advertising by visiting Ads Settings.
               </p>
             </section>
 
             <section>
               <h2 className={`text-xl font-semibold mb-4 ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>
-                Third-Party APIs
+                Information We Collect
               </h2>
               <p className="mb-4">
-                Our website uses the News API (https://newsapi.org) to provide news content. The News API is a third-party service that aggregates news articles from various sources. By using our website, you acknowledge that:
+                We collect information that you provide directly to us, including when you:
               </p>
               <ul className="list-disc pl-6 space-y-2">
-                <li>News content is provided by News API and its sources</li>
-                <li>We do not control the content of the news articles</li>
-                <li>News API may collect and process data according to their privacy policy</li>
-                <li>You should review News API's terms of service and privacy policy</li>
+                <li>Create an account</li>
+                <li>Subscribe to our newsletter</li>
+                <li>Contact us for support</li>
+                <li>Participate in surveys or promotions</li>
               </ul>
             </section>
 
             <section>
               <h2 className={`text-xl font-semibold mb-4 ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>
-                Data Collection and Usage
+                How We Use Your Information
               </h2>
               <p className="mb-4">
-                We collect and process the following types of data:
+                We use the information we collect to:
               </p>
               <ul className="list-disc pl-6 space-y-2">
-                <li>Search queries you enter on our website</li>
-                <li>Information about your device and browser</li>
-                <li>Usage data to improve our services</li>
-                <li>Cookies and similar tracking technologies</li>
+                <li>Provide, maintain, and improve our services</li>
+                <li>Process and complete transactions</li>
+                <li>Send you technical notices and support messages</li>
+                <li>Communicate with you about products, services, and events</li>
+                <li>Monitor and analyze trends and usage</li>
               </ul>
             </section>
 
             <section>
               <h2 className={`text-xl font-semibold mb-4 ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>
-                Your Rights
+                Data Security
               </h2>
-              <p className="mb-4">
-                You have the right to:
+              <p>
+                We take reasonable measures to help protect your personal information from loss, theft, misuse, unauthorized access, disclosure, alteration, and destruction. However, no method of transmission over the Internet or electronic storage is 100% secure.
               </p>
-              <ul className="list-disc pl-6 space-y-2">
-                <li>Access your personal data</li>
-                <li>Correct inaccurate data</li>
-                <li>Request deletion of your data</li>
-                <li>Opt-out of personalized advertising</li>
-                <li>Withdraw consent for data processing</li>
-              </ul>
             </section>
 
             <section>
@@ -76,16 +70,10 @@ export default function PrivacyPolicy() {
                 Contact Us
               </h2>
               <p>
-                If you have any questions about this Privacy Policy, please contact us at [Your Contact Information].
-              </p>
-            </section>
-
-            <section>
-              <h2 className={`text-xl font-semibold mb-4 ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>
-                Last Updated
-              </h2>
-              <p>
-                This Privacy Policy was last updated on {new Date().toLocaleDateString()}.
+                If you have any questions about this Privacy Policy, please contact us at{' '}
+                <a href="mailto:privacy@globalscholarships.com" className="text-blue-500 hover:text-blue-600">
+                  privacy@globalscholarships.com
+                </a>
               </p>
             </section>
           </div>

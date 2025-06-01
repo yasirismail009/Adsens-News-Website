@@ -1,7 +1,7 @@
 import Layout from '../components/Layout';
 import { useTheme } from '../contexts/ThemeContext';
 
-export default function CookiesPolicy() {
+export default function Cookies() {
   const { isDarkMode } = useTheme();
 
   return (
@@ -18,7 +18,7 @@ export default function CookiesPolicy() {
                 What Are Cookies
               </h2>
               <p className="mb-4">
-                Cookies are small text files that are placed on your computer or mobile device when you visit our website. They are widely used to make websites work more efficiently and provide a better user experience.
+                Cookies are small text files that are placed on your computer or mobile device when you visit a website. They&apos;re widely used to make websites work more efficiently and provide a better user experience.
               </p>
             </section>
 
@@ -30,10 +30,10 @@ export default function CookiesPolicy() {
                 We use cookies for the following purposes:
               </p>
               <ul className="list-disc pl-6 space-y-2">
-                <li>Essential cookies: Required for the website to function properly</li>
-                <li>Preference cookies: Remember your settings and preferences</li>
-                <li>Analytics cookies: Help us understand how visitors interact with our website</li>
-                <li>Advertising cookies: Used by Google AdSense to serve relevant advertisements</li>
+                <li>Essential cookies for website functionality</li>
+                <li>Analytics cookies to understand how visitors use our website</li>
+                <li>Advertising cookies to deliver relevant advertisements</li>
+                <li>Preference cookies to remember your settings</li>
               </ul>
             </section>
 
@@ -44,10 +44,19 @@ export default function CookiesPolicy() {
               <p className="mb-4">
                 We use the following third-party services that may set cookies:
               </p>
-              <ul className="list-disc pl-6 space-y-2">
-                <li>Google AdSense: For displaying advertisements</li>
-                <li>Google Analytics: For analyzing website usage</li>
-                <li>News API: For providing news content</li>
+              <ul className="list-disc pl-6 space-y-4">
+                <li>
+                  <strong>Google Analytics</strong>
+                  <p className="mt-2">
+                    We use Google Analytics to understand how visitors interact with our website. Google Analytics uses cookies to collect information about your visit, including the pages you view and the time you spend on our site.
+                  </p>
+                </li>
+                <li>
+                  <strong>Google AdSense</strong>
+                  <p className="mt-2">
+                    We use Google AdSense to display advertisements. Google AdSense uses cookies to serve ads based on your prior visits to our website and other sites.
+                  </p>
+                </li>
               </ul>
             </section>
 
@@ -56,19 +65,7 @@ export default function CookiesPolicy() {
                 Managing Cookies
               </h2>
               <p className="mb-4">
-                You can control and manage cookies in your browser settings. However, please note that disabling certain cookies may affect the functionality of our website.
-              </p>
-              <p className="mb-4">
-                To opt out of Google's use of cookies for advertising purposes, visit Google's Ads Settings page.
-              </p>
-            </section>
-
-            <section>
-              <h2 className={`text-xl font-semibold mb-4 ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>
-                Updates to This Policy
-              </h2>
-              <p>
-                We may update this Cookie Policy from time to time. Any changes will be posted on this page with an updated revision date.
+                You can control and/or delete cookies as you wish. You can delete all cookies that are already on your computer and you can set most browsers to prevent them from being placed. However, if you do this, you may have to manually adjust some preferences every time you visit our website.
               </p>
             </section>
 
@@ -77,16 +74,10 @@ export default function CookiesPolicy() {
                 Contact Us
               </h2>
               <p>
-                If you have any questions about our Cookie Policy, please contact us at [Your Contact Information].
-              </p>
-            </section>
-
-            <section>
-              <h2 className={`text-xl font-semibold mb-4 ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>
-                Last Updated
-              </h2>
-              <p>
-                This Cookie Policy was last updated on {new Date().toLocaleDateString()}.
+                If you have any questions about our Cookie Policy, please contact us at{' '}
+                <a href="mailto:privacy@globalscholarships.com" className="text-blue-500 hover:text-blue-600">
+                  privacy@globalscholarships.com
+                </a>
               </p>
             </section>
           </div>
