@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { fetchTopHeadlines, NewsArticle } from '../services/newsService';
 import { useTheme } from '../contexts/ThemeContext';
+import { useRouter } from 'next/router';
 
 const NewsSection: React.FC = () => {
+  const router = useRouter();
   const { isDarkMode } = useTheme();
   const [articles, setArticles] = useState<NewsArticle[]>([]);
   const [loading, setLoading] = useState(true);
@@ -13,6 +15,8 @@ const NewsSection: React.FC = () => {
       try {
         const response = await fetchTopHeadlines();
         setArticles(response.articles);
+        // Store articles in localStorage
+        localStorage.setItem('newsArticles', JSON.stringify(response.articles));
         setLoading(false);
       } catch (err) {
         setError('Failed to load news articles');
@@ -22,6 +26,15 @@ const NewsSection: React.FC = () => {
 
     loadNews();
   }, []);
+
+  const handleArticleClick = (article: NewsArticle) => {
+    // Pass article data through router state
+    const articleData = encodeURIComponent(JSON.stringify(article));
+    router.push({
+      pathname: `/news/${article.url}`,
+      query: { article: articleData }
+    });
+  };
 
   if (loading) {
     return (
@@ -47,12 +60,12 @@ const NewsSection: React.FC = () => {
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {articles.map((article, index) => (
-              index > 3 && (
             <div 
               key={index} 
-              className={`rounded-lg shadow-md overflow-hidden transition-colors duration-200 ${
+              className={`rounded-lg shadow-md overflow-hidden transition-colors duration-200 cursor-pointer ${
                 isDarkMode ? 'bg-gray-700' : 'bg-white'
               }`}
+              onClick={() => handleArticleClick(article)}
             >
               {article.urlToImage && (
                 <img
@@ -65,16 +78,7 @@ const NewsSection: React.FC = () => {
                 <h3 className={`text-xl font-semibold mb-2 ${
                   isDarkMode ? 'text-white' : 'text-gray-900'
                 }`}>
-                  <a
-                    href={article.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={`hover:underline ${
-                      isDarkMode ? 'text-blue-400 hover:text-blue-300' : 'text-blue-600 hover:text-blue-800'
-                    }`}
-                  >
-                    {article.title}
-                  </a>
+                  {article.title}
                 </h3>
                 <p className={`mb-4 ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
                   {article.description?.substring(0, 150)}...
@@ -87,7 +91,7 @@ const NewsSection: React.FC = () => {
                 </div>
               </div>
             </div>
-            )          ))}
+          ))}
         </div>
       </div>
     </section>

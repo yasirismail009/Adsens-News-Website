@@ -1,14 +1,20 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/router';
 
 interface NewsArticle {
+  source: {
+    id: string | null;
+    name: string;
+  };
+  author: string | null;
   title: string;
-  description: string;
-  urlToImage: string;
-  author: string;
-  publishedAt: string;
+  description: string | null;
   url: string;
+  urlToImage: string | null;
+  publishedAt: string;
+  content: string | null;
 }
 
 interface HeroProps {
@@ -16,6 +22,7 @@ interface HeroProps {
 }
 
 const Hero: React.FC<HeroProps> = ({ isDarkMode = false }) => {
+  const router = useRouter();
   const [mainArticle, setMainArticle] = useState<NewsArticle | null>(null);
   const [secondaryArticles, setSecondaryArticles] = useState<NewsArticle[]>([]);
   const [loading, setLoading] = useState(true);
@@ -29,6 +36,8 @@ const Hero: React.FC<HeroProps> = ({ isDarkMode = false }) => {
         if (data.articles && data.articles.length > 0) {
           setMainArticle(data.articles[0]);
           setSecondaryArticles(data.articles.slice(1, 4));
+          // Store articles in localStorage
+          localStorage.setItem('newsArticles', JSON.stringify(data.articles));
         }
       } catch (error) {
         console.error('Error fetching news:', error);
@@ -40,6 +49,17 @@ const Hero: React.FC<HeroProps> = ({ isDarkMode = false }) => {
     fetchNews();
   }, []);
 
+  const handleArticleClick = (article: NewsArticle) => {
+    // Create a unique ID from the article URL
+    const articleId = Buffer.from(article.url).toString('base64');
+    // Pass article data through router state
+    const articleData = encodeURIComponent(JSON.stringify(article));
+    router.push({
+      pathname: `/news/${articleId}`,
+      query: { article: articleData }
+    });
+  };
+
   if (loading) {
     return (
       <div className="flex flex-col md:flex-row gap-4 mb-6">
@@ -50,75 +70,63 @@ const Hero: React.FC<HeroProps> = ({ isDarkMode = false }) => {
 
   return (
     <div className="flex flex-col md:flex-row gap-4 mb-6">
-      {/* Main hero section - left */}
-      <div className="md:w-2/3 relative">
-        <div className={`relative h-64 md:h-96 rounded-md overflow-hidden ${isDarkMode ? 'shadow-lg shadow-gray-800' : 'shadow-md'}`}>
-          {mainArticle?.urlToImage && (
-            <Image
-              src={mainArticle.urlToImage}
-              alt={mainArticle.title}
-              fill
-              className="object-cover"
-              priority
-            />
-          )}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
-          
-          <div className="absolute bottom-0 left-0 p-4 md:p-6 text-white">
-            <div className="flex items-center mb-2 md:mb-3">
-              <div className="h-6 w-6 md:h-7 md:w-7 rounded-full bg-gray-300 flex items-center justify-center mr-2">
-                <span className="text-xs font-bold text-gray-800">
-                  {mainArticle?.author?.[0] || 'N'}
-                </span>
+      {mainArticle && (
+        <div 
+          className="flex-1 cursor-pointer"
+          onClick={() => handleArticleClick(mainArticle)}
+        >
+          <div className={`relative h-[400px] rounded-lg overflow-hidden ${isDarkMode ? 'bg-gray-800' : 'bg-white'} shadow-md`}>
+            {mainArticle.urlToImage && (
+              <img
+                src={mainArticle.urlToImage}
+                alt={mainArticle.title}
+                className="w-full h-full object-cover"
+              />
+            )}
+            <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black to-transparent">
+              <h2 className={`text-2xl font-bold mb-2 ${isDarkMode ? 'text-white' : 'text-white'}`}>
+                {mainArticle.title}
+              </h2>
+              <p className={`text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-200'}`}>
+                {mainArticle.description}
+              </p>
+              <div className="flex items-center mt-2 text-xs text-gray-300">
+                <span>{mainArticle.source.name}</span>
+                <span className="mx-2">•</span>
+                <span>{new Date(mainArticle.publishedAt).toLocaleDateString()}</span>
               </div>
-              <span className="text-xs font-medium">{mainArticle?.author || 'News Staff'}</span>
-              <span className="text-xs text-gray-300 ml-2">• {new Date(mainArticle?.publishedAt || '').toLocaleDateString()}</span>
-            </div>
-            
-            <h1 className="text-xl md:text-3xl font-bold mb-1 md:mb-2">
-              {mainArticle?.title || 'Loading...'}
-            </h1>
-            <p className="text-gray-200 mb-2 md:mb-3 text-xs md:text-sm line-clamp-2">
-              {mainArticle?.description || 'Loading...'}
-            </p>
-            <div className="flex gap-3 items-center">
-              <Link 
-                href={mainArticle?.url || '#'}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={`${isDarkMode ? 'bg-blue-600 hover:bg-blue-700' : 'bg-blue-600 hover:bg-blue-700'} text-white px-3 py-1.5 rounded text-xs font-medium transition-colors`}
-              >
-                Read More
-              </Link>
             </div>
           </div>
         </div>
-      </div>
-      
-      {/* Secondary stories - right */}
-      <div className="md:w-1/3 space-y-3 grid grid-cols-1 sm:grid-cols-3 md:grid-cols-1 gap-3 sm:gap-3 md:gap-0 md:space-y-3 mt-3 md:mt-0">
+      )}
+
+      <div className="flex-1 grid grid-cols-1 gap-4">
         {secondaryArticles.map((article, index) => (
-          <div key={index} className={`${isDarkMode ? 'bg-gray-800' : 'bg-white'} rounded-md overflow-hidden flex h-[110px] md:h-[120px] shadow-sm transition-colors duration-200`}>
-            <div className="w-1/2 p-2 md:p-3">
-              <span className="text-xs text-blue-500 font-medium">Latest News</span>
-              <h3 className={`text-xs font-bold mt-1 mb-1 md:mb-2 line-clamp-3 ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>
-                {article.title}
-              </h3>
-              <div className="flex items-center mt-auto">
-                <span className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
-                  {new Date(article.publishedAt).toLocaleDateString()}
-                </span>
-              </div>
-            </div>
-            <div className="w-1/2 relative">
+          <div 
+            key={index}
+            className={`cursor-pointer ${isDarkMode ? 'bg-gray-800' : 'bg-white'} rounded-lg shadow-md overflow-hidden`}
+            onClick={() => handleArticleClick(article)}
+          >
+            <div className="flex h-32">
               {article.urlToImage && (
-                <Image 
-                  src={article.urlToImage}
-                  alt={article.title}
-                  fill
-                  className="object-cover"
-                />
+                <div className="w-1/3">
+                  <img
+                    src={article.urlToImage}
+                    alt={article.title}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
               )}
+              <div className="flex-1 p-4">
+                <h3 className={`text-sm font-semibold mb-1 ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>
+                  {article.title}
+                </h3>
+                <div className="flex items-center text-xs text-gray-500">
+                  <span>{article.source.name}</span>
+                  <span className="mx-1">•</span>
+                  <span>{new Date(article.publishedAt).toLocaleDateString()}</span>
+                </div>
+              </div>
             </div>
           </div>
         ))}

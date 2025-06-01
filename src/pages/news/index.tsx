@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import Layout from '../../components/Layout';
 import { useTheme } from '../../contexts/ThemeContext';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 
 interface NewsArticle {
   source: {
@@ -19,6 +20,7 @@ interface NewsArticle {
 
 export default function NewsPage() {
   const { isDarkMode } = useTheme();
+  const router = useRouter();
   const [articles, setArticles] = useState<NewsArticle[]>([]);
   const [searchQuery, setSearchQuery] = useState('bitcoin');
   const [inputValue, setInputValue] = useState('bitcoin');
@@ -98,6 +100,14 @@ export default function NewsPage() {
       </Layout>
     );
   }
+  const handleArticleClick = (article: NewsArticle) => {
+    // Store the article data in router state
+    const encodedArticle = encodeURIComponent(JSON.stringify(article));
+    router.push({
+      pathname: `/news/${encodeURIComponent(article.url)}`,
+      query: { article: encodedArticle }
+    });
+  };
 
   return (
     <Layout>
@@ -150,6 +160,7 @@ export default function NewsPage() {
                 className={`${
                   isDarkMode ? 'bg-gray-800' : 'bg-white'
                 } rounded-lg shadow-md overflow-hidden transition-colors duration-200`}
+               
               >
                 {article.urlToImage && (
                   <img
@@ -183,10 +194,9 @@ export default function NewsPage() {
                       {new Date(article.publishedAt).toLocaleDateString()}
                     </span>
                   </div>
-                  <a
-                    href={article.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
+                  <button
+                    onClick={() => handleArticleClick(article)}
+                    
                     className={`mt-4 inline-block ${
                       isDarkMode 
                         ? 'text-blue-400 hover:text-blue-300' 
@@ -194,7 +204,7 @@ export default function NewsPage() {
                     } text-sm font-medium transition-colors`}
                   >
                     Read More →
-                  </a>
+                  </button>
                 </div>
               </article>
             ))}
