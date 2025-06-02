@@ -9,6 +9,7 @@ export default function Document() {
           src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7534279843511977"
           crossOrigin="anonymous"
         />
+        <meta name="google-adsense-account" content="ca-pub-7534279843511977" />
       </Head>
       <body className="antialiased">
         <Main />
