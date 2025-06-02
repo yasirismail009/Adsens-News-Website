@@ -3,6 +3,7 @@ import Layout from '../../components/Layout';
 import { useTheme } from '../../contexts/ThemeContext';
 import { useRouter } from 'next/router';
 import Image from 'next/image';
+import AdUnit from '@/components/AdUnit';
 
 interface NewsArticle {
   // Common fields
@@ -298,6 +299,7 @@ export default function NewsPage() {
               </button>
             </div>
           </form>
+          <AdUnit className="my-8" />
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {articles.map((article, index) => (

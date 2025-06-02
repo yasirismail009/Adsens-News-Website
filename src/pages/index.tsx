@@ -3,6 +3,7 @@ import Layout from '../components/Layout';
 import Hero from '../components/Hero';
 import NewsSection from '../components/NewsSection';
 import SEO from '../components/SEO';
+import AdUnit from '../components/AdUnit';
 import { useTheme } from '../contexts/ThemeContext';
 import { NewsArticle, NewsResponse } from '../services/newsService';
 import { fetchTopHeadlines } from '../services/newsService';
@@ -40,6 +41,9 @@ const Home: React.FC = () => {
         keywords="scholarships, education news, academic updates, global education"
       />
       <Hero isDarkMode={isDarkMode} />
+      <div className="container mx-auto px-4 py-8">
+        <AdUnit className="my-8" />
+      </div>
       <NewsSection articles={articles} loading={loading} error={error} />
     </Layout>
   );

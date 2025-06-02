@@ -5,6 +5,7 @@ import Layout from '../../components/Layout';
 import { useTheme } from '../../contexts/ThemeContext';
 import Image from 'next/image';
 import SEO from '@/components/SEO';
+import AdUnit from '@/components/AdUnit';
 
 interface NewsArticle {
   // Common fields
@@ -203,6 +204,7 @@ const NewsDetail = () => {
             >
               ← Back to News
             </button>
+            <AdUnit className="my-8" />
 
             <article className={`${isDarkMode ? 'bg-gray-800' : 'bg-white'} rounded-lg shadow-md overflow-hidden transition-colors duration-200`}>
               {article.multimedia?.[0]?.url && (
