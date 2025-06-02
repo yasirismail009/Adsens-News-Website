@@ -7,7 +7,7 @@ interface AdUnitProps {
 const AdUnit = ({ className = '' }: AdUnitProps) => {
   useEffect(() => {
     try {
-      // @ts-ignore
+      // @ts-expect-error - adsbygoogle is injected by Google AdSense
       (window.adsbygoogle = window.adsbygoogle || []).push({});
     } catch (err) {
       console.error('Error loading AdSense:', err);
