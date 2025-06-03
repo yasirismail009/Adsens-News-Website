@@ -38,7 +38,7 @@ const Home: React.FC = () => {
       <SEO 
         title="Global Scholarships - Latest News and Updates"
         description="Discover the latest news and updates about scholarships, education, and academic opportunities worldwide."
-        keywords="scholarships, education news, academic updates, global education"
+        keywords={["scholarships", "education news", "academic updates", "global education"]}
       />
       <Hero isDarkMode={isDarkMode} />
       <div className="container mx-auto px-4 py-8">

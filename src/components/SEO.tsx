@@ -1,122 +1,130 @@
 import Head from 'next/head';
+import { useRouter } from 'next/router';
 
 interface SEOProps {
-  title: string;
-  description: string;
-  keywords?: string;
-  ogImage?: string;
-  ogUrl?: string;
-  ogType?: string;
-  twitterCard?: string;
-  articlePublishedTime?: string;
-  articleModifiedTime?: string;
-  articleAuthor?: string;
-  articleSection?: string;
-  articleTag?: string[];
+  title?: string;
+  description?: string;
+  image?: string;
+  article?: boolean;
+  publishedTime?: string;
+  modifiedTime?: string;
+  authors?: string[];
+  tags?: string[];
+  section?: string;
+  keywords?: string[];
+  noindex?: boolean;
+  nofollow?: boolean;
 }
 
-const SEO: React.FC<SEOProps> = ({
-  title,
-  description,
-  keywords,
-  ogImage,
-  ogUrl,
-  ogType = 'website',
-  twitterCard = 'summary_large_image',
-  articlePublishedTime,
-  articleModifiedTime,
-  articleAuthor,
-  articleSection,
-  articleTag
-}) => {
-  const siteTitle = 'Global Scholarships - Latest News and Updates';
-  const fullTitle = `${title} | ${siteTitle}`;
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://globalscholarships.com';
-  const twitterHandle = process.env.NEXT_PUBLIC_TWITTER_HANDLE || '@GlobalScholarships';
-
-  // Generate structured data for news articles
-  const structuredData = ogType === 'article' ? {
-    '@context': 'https://schema.org',
-    '@type': 'NewsArticle',
-    headline: title,
-    description: description,
-    image: ogImage,
-    datePublished: articlePublishedTime,
-    dateModified: articleModifiedTime,
-    author: {
-      '@type': 'Person',
-      name: articleAuthor
-    },
-    publisher: {
-      '@type': 'Organization',
-      name: siteTitle,
-      logo: {
-        '@type': 'ImageObject',
-        url: `${siteUrl}/logo.png`
-      }
-    },
-    mainEntityOfPage: {
-      '@type': 'WebPage',
-      '@id': ogUrl
-    }
-  } : null;
+const SEO = ({
+  title = 'Global Scholarships - Latest Scholarship News and Opportunities',
+  description = 'Stay updated with the latest scholarship news, opportunities, and educational resources from around the world. Find scholarships for students, researchers, and professionals.',
+  image = 'https://globalscholarships.com/og-image.jpg',
+  article = false,
+  publishedTime,
+  modifiedTime,
+  authors = ['Global Scholarships Team'],
+  tags = ['scholarships', 'education', 'news', 'opportunities'],
+  section,
+  keywords = ['scholarships', 'education', 'news', 'opportunities', 'study abroad'],
+  noindex = false,
+  nofollow = false,
+}: SEOProps) => {
+  const router = useRouter();
+  const canonicalUrl = `https://globalscholarships.com${router.asPath}`;
 
   return (
     <Head>
       {/* Basic Meta Tags */}
-      <title>{fullTitle}</title>
+      <title>{title}</title>
       <meta name="description" content={description} />
-      {keywords && <meta name="keywords" content={keywords} />}
-      <meta name="viewport" content="width=device-width, initial-scale=1" />
-      <link rel="icon" href="/favicon.ico" />
+      <meta name="keywords" content={keywords.join(', ')} />
+      <link rel="canonical" href={canonicalUrl} />
+      
+      {/* Robots Meta */}
+      <meta 
+        name="robots" 
+        content={`${noindex ? 'noindex' : 'index'},${nofollow ? 'nofollow' : 'follow'}`} 
+      />
 
-      {/* Open Graph Meta Tags */}
-      <meta property="og:title" content={fullTitle} />
+      {/* Open Graph / Facebook */}
+      <meta property="og:type" content={article ? 'article' : 'website'} />
+      <meta property="og:url" content={canonicalUrl} />
+      <meta property="og:title" content={title} />
       <meta property="og:description" content={description} />
-      {ogImage && <meta property="og:image" content={ogImage} />}
-      {ogUrl && <meta property="og:url" content={ogUrl} />}
-      <meta property="og:type" content={ogType} />
-      <meta property="og:site_name" content={siteTitle} />
+      <meta property="og:image" content={image} />
+      <meta property="og:site_name" content="Global Scholarships" />
       <meta property="og:locale" content="en_US" />
 
+      {/* Twitter */}
+      <meta name="twitter:card" content="summary_large_image" />
+      <meta name="twitter:url" content={canonicalUrl} />
+      <meta name="twitter:title" content={title} />
+      <meta name="twitter:description" content={description} />
+      <meta name="twitter:image" content={image} />
+      <meta name="twitter:site" content="@globalscholarships" />
+      <meta name="twitter:creator" content="@globalscholarships" />
+
       {/* Article Specific Meta Tags */}
-      {ogType === 'article' && (
+      {article && (
         <>
-          {articlePublishedTime && <meta property="article:published_time" content={articlePublishedTime} />}
-          {articleModifiedTime && <meta property="article:modified_time" content={articleModifiedTime} />}
-          {articleAuthor && <meta property="article:author" content={articleAuthor} />}
-          {articleSection && <meta property="article:section" content={articleSection} />}
-          {articleTag && articleTag.map((tag, index) => (
-            <meta key={index} property="article:tag" content={tag} />
+          <meta property="article:published_time" content={publishedTime} />
+          <meta property="article:modified_time" content={modifiedTime} />
+          {section && <meta property="article:section" content={section} />}
+          {authors.map((author) => (
+            <meta key={author} property="article:author" content={author} />
+          ))}
+          {tags.map((tag) => (
+            <meta key={tag} property="article:tag" content={tag} />
           ))}
         </>
       )}
 
-      {/* Twitter Meta Tags */}
-      <meta name="twitter:card" content={twitterCard} />
-      <meta name="twitter:title" content={fullTitle} />
-      <meta name="twitter:description" content={description} />
-      {ogImage && <meta name="twitter:image" content={ogImage} />}
-      <meta name="twitter:site" content={twitterHandle} />
-      <meta name="twitter:creator" content={twitterHandle} />
-
-      {/* Additional Meta Tags */}
-      <meta name="robots" content="index, follow" />
-      <meta name="language" content="English" />
-      <meta name="revisit-after" content="7 days" />
-      <meta name="author" content="Global Scholarships" />
-      <meta name="news_keywords" content={keywords} />
-
-      {/* Canonical URL */}
-      {ogUrl && <link rel="canonical" href={ogUrl} />}
+      {/* News Specific Meta Tags */}
+      {article && (
+        <>
+          <meta name="news_keywords" content={keywords.join(', ')} />
+          <meta name="date" content={publishedTime} />
+          <meta name="author" content={authors.join(', ')} />
+        </>
+      )}
 
       {/* Structured Data */}
-      {structuredData && (
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
-        />
-      )}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': article ? 'NewsArticle' : 'WebPage',
+            headline: title,
+            description: description,
+            image: image,
+            url: canonicalUrl,
+            publisher: {
+              '@type': 'Organization',
+              name: 'Global Scholarships',
+              logo: {
+                '@type': 'ImageObject',
+                url: 'https://globalscholarships.com/logo.png'
+              }
+            },
+            ...(article && {
+              datePublished: publishedTime,
+              dateModified: modifiedTime,
+              author: authors.map((author) => ({
+                '@type': 'Person',
+                name: author,
+              })),
+              keywords: keywords.join(', '),
+              articleSection: section,
+              mainEntityOfPage: {
+                '@type': 'WebPage',
+                '@id': canonicalUrl
+              }
+            }),
+          }),
+        }}
+      />
     </Head>
   );
 };

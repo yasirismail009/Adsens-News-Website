@@ -185,15 +185,17 @@ const NewsDetail = () => {
       <SEO
         title={getArticleTitle(article)}
         description={getArticleDescription(article)}
-        ogImage={article.multimedia?.[0]?.url}
-        ogUrl={getArticleUrl(article)}
-        ogType="article"
-        keywords={`${getArticleSection(article)}, ${article.keywords?.map(k => k.value).join(', ') || ''}`}
-        articlePublishedTime={getArticleDate(article)}
-        articleModifiedTime={getArticleDate(article)}
-        articleAuthor={getArticleAuthor(article)}
-        articleSection={getArticleSection(article)}
-        articleTag={article.keywords?.map(k => k.value) || []}
+        image={article.multimedia?.[0]?.url}
+        article={true}
+        publishedTime={getArticleDate(article)}
+        modifiedTime={getArticleDate(article)}
+        authors={[getArticleAuthor(article)]}
+        section={getArticleSection(article)}
+        keywords={[
+          getArticleSection(article),
+          ...(article.keywords?.map(k => k.value) || [])
+        ]}
+        tags={article.keywords?.map(k => k.value) || []}
       />
       <Layout>
         <div className={`${isDarkMode ? 'bg-gray-900' : 'bg-gray-100'} min-h-screen py-5 transition-colors duration-200`}>

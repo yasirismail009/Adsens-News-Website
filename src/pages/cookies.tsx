@@ -75,8 +75,8 @@ export default function Cookies() {
               </h2>
               <p>
                 If you have any questions about our Cookie Policy, please contact us at{' '}
-                <a href="mailto:privacy@globalscholarships.com" className="text-blue-500 hover:text-blue-600">
-                  privacy@globalscholarships.com
+                <a href="mailto:yasirismailbusiness@gmail.com" className="text-blue-500 hover:text-blue-600">
+                yasirismailbusiness@gmail.com
                 </a>
               </p>
             </section>
