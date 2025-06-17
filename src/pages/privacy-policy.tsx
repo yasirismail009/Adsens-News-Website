@@ -15,6 +15,42 @@ export default function PrivacyPolicy() {
           <div className={`space-y-6 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
             <section>
               <h2 className={`text-xl font-semibold mb-4 ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>
+                New York Times API
+              </h2>
+              <p className="mb-4">
+                Our website uses the New York Times API to provide you with news content. When you access news articles through our platform, we may share certain information with The New York Times Company to:
+              </p>
+              <ul className="list-disc pl-6 space-y-2 mb-4">
+                <li>Retrieve and display news articles and related content</li>
+                <li>Track article views and engagement metrics</li>
+                <li>Ensure compliance with The New York Times&apos; terms of service</li>
+                <li>Improve the quality and relevance of news content</li>
+              </ul>
+              <p className="mb-4">
+                The New York Times may collect certain information about your interaction with their content, including:
+              </p>
+              <ul className="list-disc pl-6 space-y-2 mb-4">
+                <li>Article view counts and reading time</li>
+                <li>Device and browser information</li>
+                <li>IP address and general location data</li>
+                <li>Referral information</li>
+              </ul>
+              <p>
+                For more information about how The New York Times handles your data, please refer to their{' '}
+                <a 
+                  href="https://www.nytimes.com/privacy/privacy-policy" 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="text-blue-500 hover:text-blue-600"
+                >
+                  Privacy Policy
+                </a>
+                .
+              </p>
+            </section>
+
+            <section>
+              <h2 className={`text-xl font-semibold mb-4 ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>
                 Google AdSense
               </h2>
               <p className="mb-4">
