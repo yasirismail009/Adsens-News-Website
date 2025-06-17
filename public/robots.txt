@@ -2,8 +2,8 @@
 User-agent: *
 Allow: /
 
-# Sitemap location
-Sitemap: https://globalscholarships.com/sitemap.xml
+# Sitemap
+Sitemap: https://globalnews.com/sitemap.xml
 
 # Disallow admin and API routes
 Disallow: /admin/

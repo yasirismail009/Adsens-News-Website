@@ -23,6 +23,9 @@ const Header: React.FC<HeaderProps> = ({ isDarkMode, toggleDarkMode }) => {
             <Link href="/contact" className={`hover:text-blue-500 ${isDarkMode ? 'text-white' : 'text-gray-700'}`}>
               Contact
             </Link>
+            <Link href="/publisher-policies" className={`hover:text-blue-500 ${isDarkMode ? 'text-white' : 'text-gray-700'}`}>
+              Publisher Policies
+            </Link>
             <button
               onClick={toggleDarkMode}
               className={`p-2 rounded-full ${isDarkMode ? 'bg-gray-700 text-yellow-300' : 'bg-gray-100 text-gray-700'}`}

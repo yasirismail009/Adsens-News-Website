@@ -1,6 +1,6 @@
 import { GetServerSideProps } from 'next';
 
-const EXTERNAL_DATA_URL = 'https://globalscholarships.com';
+const EXTERNAL_DATA_URL = 'https://globalnews.com';
 
 function generateSiteMap(pages: string[]) {
   return `<?xml version="1.0" encoding="UTF-8"?>

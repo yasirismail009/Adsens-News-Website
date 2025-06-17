@@ -1,75 +1,17 @@
-import React from 'react';
+"use client";
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
 import Layout from '../../components/Layout';
 import { useTheme } from '../../contexts/ThemeContext';
 import Image from 'next/image';
 import SEO from '@/components/SEO';
 import AdUnit from '@/components/AdUnit';
-
-interface NewsArticle {
-  // Common fields
-  title: string;
-  description: string;
-  url: string;
-  published_at: string;
-  source: string;
-  multimedia?: Array<{
-    url: string;
-    format?: string;
-    height: number;
-    width: number;
-    type?: string;
-    subtype?: string;
-    caption: string;
-    copyright?: string;
-  }>;
-  kicker?: string;
-  
-  // Top Stories API specific fields
-  uuid?: string;
-  categories?: string[];
-  section?: string;
-  subsection?: string;
-  byline?: string;
-  des_facet?: string[];
-  org_facet?: string[];
-  per_facet?: string[];
-  geo_facet?: string[];
-  item_type?: string;
-  updated_date?: string;
-  created_date?: string;
-
-  // Article Search API specific fields
-  abstract?: string;
-  web_url?: string;
-  headline?: {
-    main: string;
-    kicker?: string;
-    print_headline?: string;
-  };
-  pub_date?: string;
-  section_name?: string;
-  byline_original?: string;
-  snippet?: string;
-  keywords?: Array<{
-    name: string;
-    value: string;
-    rank: number;
-  }>;
-  news_desk?: string;
-  subsection_name?: string;
-  type_of_material?: string;
-  word_count?: number;
-  document_type?: string;
-  _id?: string;
-  uri?: string;
-}
+import { NewsArticle } from '@/services/newsService';
 
 const NewsDetail = () => {
   const router = useRouter();
   const { isDarkMode } = useTheme();
-  const [article, setArticle] = useState<NewsArticle | null>(null);
+  const [article, setArticle] = useState<NewsArticle | null>();
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -115,32 +57,32 @@ const NewsDetail = () => {
 
   // Helper function to get article title
   const getArticleTitle = (article: NewsArticle) => {
-    return article.headline?.main || article.title;
+    return article.title;
   };
 
   // Helper function to get article description
   const getArticleDescription = (article: NewsArticle) => {
-    return article.abstract || article.description || article.snippet || '';
+    return article.abstract;
   };
 
   // Helper function to get article URL
   const getArticleUrl = (article: NewsArticle) => {
-    return article.web_url || article.url;
+    return article.url;
   };
 
   // Helper function to get article date
   const getArticleDate = (article: NewsArticle) => {
-    return article.pub_date || article.published_at;
+    return article.published_date;
   };
 
   // Helper function to get article author
   const getArticleAuthor = (article: NewsArticle) => {
-    return article.byline_original || article.byline || article.source;
+    return article.byline;
   };
 
   // Helper function to get article section
   const getArticleSection = (article: NewsArticle) => {
-    return article.section_name || article.section || '';
+    return article.section;
   };
 
   if (isLoading) {
@@ -183,19 +125,22 @@ const NewsDetail = () => {
   return (
     <>
       <SEO
-        title={getArticleTitle(article)}
-        description={getArticleDescription(article)}
+        title={article.title}
+        description={article.abstract}
         image={article.multimedia?.[0]?.url}
         article={true}
-        publishedTime={getArticleDate(article)}
-        modifiedTime={getArticleDate(article)}
-        authors={[getArticleAuthor(article)]}
-        section={getArticleSection(article)}
+        publishedTime={article.published_date || article.created_date || ''}
+        modifiedTime={article.updated_date || article.published_date || article.created_date || ''}
+        authors={[article.byline]}
+        section={article.section}
         keywords={[
-          getArticleSection(article),
-          ...(article.keywords?.map(k => k.value) || [])
+          article.section,
+          ...(article.des_facet || []),
+          ...(article.org_facet || []),
+          ...(article.per_facet || []),
+          ...(article.geo_facet || [])
         ]}
-        tags={article.keywords?.map(k => k.value) || []}
+        tags={article.des_facet || []}
       />
       <Layout>
         <div className={`${isDarkMode ? 'bg-gray-900' : 'bg-gray-100'} min-h-screen py-5 transition-colors duration-200`}>
@@ -208,12 +153,12 @@ const NewsDetail = () => {
             </button>
             <AdUnit className="my-8" />
 
-            <article className={`${isDarkMode ? 'bg-gray-800' : 'bg-white'} rounded-lg shadow-md overflow-hidden transition-colors duration-200`}>
+            <article className={`${isDarkMode ? 'bg-gray-800' : 'bg-white'} rounded-lg shadow-lg overflow-hidden`}>
               {article.multimedia?.[0]?.url && (
                 <div className="relative w-full h-96">
                   <Image
                     src={article.multimedia[0].url}
-                    alt={article.multimedia[0].caption || getArticleTitle(article)}
+                    alt={article.multimedia[0].caption || article.title}
                     fill
                     className="object-cover"
                     sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
@@ -231,25 +176,25 @@ const NewsDetail = () => {
               )}
 
               <div className="p-6">
-                {(article.kicker || article.headline?.kicker) && (
+                {article.kicker && (
                   <p className={`text-sm font-medium mb-2 ${
                     isDarkMode ? 'text-blue-400' : 'text-blue-600'
                   }`}>
-                    {article.headline?.kicker || article.kicker}
+                    {article.kicker}
                   </p>
                 )}
 
                 <h1 className={`text-3xl font-bold mb-4 ${
                   isDarkMode ? 'text-white' : 'text-gray-900'
                 }`}>
-                  {getArticleTitle(article)}
+                  {article.title}
                 </h1>
 
-                {getArticleAuthor(article) && (
+                {article.byline && (
                   <p className={`text-sm mb-4 ${
                     isDarkMode ? 'text-gray-300' : 'text-gray-600'
                   }`}>
-                    {getArticleAuthor(article)}
+                    {article.byline}
                   </p>
                 )}
 
@@ -257,31 +202,25 @@ const NewsDetail = () => {
                   <span className={`${
                     isDarkMode ? 'text-gray-400' : 'text-gray-500'
                   }`}>
-                    {new Date(getArticleDate(article)).toLocaleDateString()}
+                    {new Date(article.published_date || article.created_date).toLocaleDateString()}
                   </span>
                   <span className={`${
                     isDarkMode ? 'text-gray-400' : 'text-gray-500'
                   }`}>
-                    {getArticleSection(article)}
+                    {article.section}
+                    {article.subsection && ` > ${article.subsection}`}
                   </span>
-                  {article.word_count && (
-                    <span className={`${
-                      isDarkMode ? 'text-gray-400' : 'text-gray-500'
-                    }`}>
-                      {article.word_count} words
-                    </span>
-                  )}
                 </div>
 
-                <div className={`prose ${isDarkMode ? 'prose-invert' : ''} max-w-none`}>
+                <div className="prose dark:prose-invert max-w-none">
                   <p className={`text-lg mb-6 ${
                     isDarkMode ? 'text-gray-300' : 'text-gray-700'
                   }`}>
-                    {getArticleDescription(article)}
+                    {article.abstract}
                   </p>
                 </div>
 
-                {(article.keywords || article.categories) && (
+                {(article.des_facet?.length || article.org_facet?.length || article.per_facet?.length || article.geo_facet?.length) && (
                   <div className="mt-8 pt-6 border-t border-gray-200 dark:border-gray-700">
                     <h2 className={`text-lg font-semibold mb-3 ${
                       isDarkMode ? 'text-white' : 'text-gray-900'
@@ -289,28 +228,52 @@ const NewsDetail = () => {
                       Topics
                     </h2>
                     <div className="flex flex-wrap gap-2">
-                      {article.keywords?.map((keyword, index) => (
+                      {article.des_facet?.map((topic, index) => (
                         <span
-                          key={index}
+                          key={`des-${index}`}
                           className={`px-3 py-1 rounded-full text-sm ${
                             isDarkMode 
                               ? 'bg-gray-700 text-gray-300' 
                               : 'bg-gray-100 text-gray-700'
                           }`}
                         >
-                          {keyword.value}
+                          {topic}
                         </span>
                       ))}
-                      {article.categories?.map((category, index) => (
+                      {article.org_facet?.map((org, index) => (
                         <span
-                          key={index}
+                          key={`org-${index}`}
                           className={`px-3 py-1 rounded-full text-sm ${
                             isDarkMode 
                               ? 'bg-gray-700 text-gray-300' 
                               : 'bg-gray-100 text-gray-700'
                           }`}
                         >
-                          {category}
+                          {org}
+                        </span>
+                      ))}
+                      {article.per_facet?.map((person, index) => (
+                        <span
+                          key={`per-${index}`}
+                          className={`px-3 py-1 rounded-full text-sm ${
+                            isDarkMode 
+                              ? 'bg-gray-700 text-gray-300' 
+                              : 'bg-gray-100 text-gray-700'
+                          }`}
+                        >
+                          {person}
+                        </span>
+                      ))}
+                      {article.geo_facet?.map((location, index) => (
+                        <span
+                          key={`geo-${index}`}
+                          className={`px-3 py-1 rounded-full text-sm ${
+                            isDarkMode 
+                              ? 'bg-gray-700 text-gray-300' 
+                              : 'bg-gray-100 text-gray-700'
+                          }`}
+                        >
+                          {location}
                         </span>
                       ))}
                     </div>
@@ -319,14 +282,10 @@ const NewsDetail = () => {
 
                 <div className="mt-8 pt-6 border-t border-gray-200 dark:border-gray-700">
                   <a
-                    href={getArticleUrl(article)}
+                    href={article.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className={`inline-block ${
-                      isDarkMode 
-                        ? 'bg-blue-600 hover:bg-blue-700' 
-                        : 'bg-blue-600 hover:bg-blue-700'
-                    } text-white font-medium px-6 py-3 rounded-md transition-colors`}
+                    className={`inline-block bg-blue-600 hover:bg-blue-700 text-white font-medium px-6 py-3 rounded-md transition-colors`}
                   >
                     Read Full Article on NYT
                   </a>

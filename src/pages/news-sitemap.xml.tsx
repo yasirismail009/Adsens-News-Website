@@ -1,6 +1,6 @@
 import { GetServerSideProps } from 'next';
 
-const EXTERNAL_DATA_URL = 'https://globalscholarships.com';
+const EXTERNAL_DATA_URL = 'https://globalnews.com';
 
 function generateNewsSiteMap(articles: Array<{
   url: string;
@@ -18,7 +18,7 @@ function generateNewsSiteMap(articles: Array<{
            <loc>${`${EXTERNAL_DATA_URL}${article.url}`}</loc>
            <news:news>
                <news:publication>
-                   <news:name>Global Scholarships</news:name>
+                   <news:name>Global News</news:name>
                    <news:language>en</news:language>
                </news:publication>
                <news:publication_date>${article.publicationDate}</news:publication_date>
@@ -41,10 +41,10 @@ export const getServerSideProps: GetServerSideProps = async ({ res }) => {
   // In a real application, you would fetch this from your database
   const articles = [
     {
-      url: '/news/scholarship-opportunities-2024',
-      title: 'Top Scholarship Opportunities for 2024',
+      url: '/news/latest-updates-2024',
+      title: 'Latest News Updates for 2024',
       publicationDate: '2024-03-20T12:00:00Z',
-      keywords: ['scholarships', '2024', 'education', 'opportunities'],
+      keywords: ['news', '2024', 'updates', 'information'],
     },
     {
       url: '/news/study-abroad-guide',

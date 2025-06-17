@@ -9,7 +9,7 @@ export default function CookieConsentBanner() {
     <CookieConsent
       location="bottom"
       buttonText="Accept"
-      cookieName="global-scholarships-cookie-consent"
+      cookieName="global-news-cookie-consent"
       style={{
         background: isDarkMode ? '#1F2937' : '#F3F4F6',
         color: isDarkMode ? '#E5E7EB' : '#374151',

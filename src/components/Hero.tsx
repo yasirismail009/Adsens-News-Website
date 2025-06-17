@@ -117,11 +117,8 @@ const Hero: React.FC<HeroProps> = ({ isDarkMode = false }) => {
   }, []);
 
   const handleArticleClick = (article: NewsArticle) => {
-    // Create a unique ID from the article URL
-    router.push({
-      pathname: `/news/${encodeURIComponent(article.url)}`,
-      query: { article: encodeURIComponent(JSON.stringify(article)) }
-    });
+    localStorage.setItem('currentArticle', JSON.stringify(article));
+    router.push(`/news/${encodeURIComponent(article.url)}`);
   };
 
   if (loading) {

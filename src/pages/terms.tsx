@@ -57,7 +57,7 @@ export default function Terms() {
                 Intellectual Property
               </h2>
               <p>
-                All content on this website, including text, graphics, logos, and software, is the property of Global Scholarships or its content suppliers and is protected by international copyright laws. You may not reproduce, distribute, or create derivative works from this content without our express permission.
+                All content on this website, including text, graphics, logos, and software, is the property of Global News or its content suppliers and is protected by international copyright laws. You may not reproduce, distribute, or create derivative works from this content without our express permission.
               </p>
             </section>
 
@@ -66,7 +66,7 @@ export default function Terms() {
                 Limitation of Liability
               </h2>
               <p>
-                Global Scholarships shall not be liable for any indirect, incidental, special, consequential, or punitive damages resulting from your use of or inability to use the service. We do not guarantee the accuracy, completeness, or usefulness of any information on the website.
+                Global News shall not be liable for any indirect, incidental, special, consequential, or punitive damages resulting from your use of or inability to use the service. We do not guarantee the accuracy, completeness, or usefulness of any information on the website.
               </p>
             </section>
 
@@ -76,8 +76,8 @@ export default function Terms() {
               </h2>
               <p>
                 If you have any questions about these Terms of Service, please contact us at{' '}
-                <a href="mailto:legal@globalscholarships.com" className="text-blue-500 hover:text-blue-600">
-                  legal@globalscholarships.com
+                <a href="mailto:legal@globalnews.com" className="text-blue-500 hover:text-blue-600">
+                  legal@globalnews.com
                 </a>
               </p>
             </section>

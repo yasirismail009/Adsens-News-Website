@@ -4,65 +4,8 @@ import { useTheme } from '../../contexts/ThemeContext';
 import { useRouter } from 'next/router';
 import Image from 'next/image';
 import AdUnit from '@/components/AdUnit';
-
-interface NewsArticle {
-  // Common fields
-  title: string;
-  description: string;
-  url: string;
-  published_at: string;
-  source: string;
-  multimedia?: Array<{
-    url: string;
-    format?: string;
-    height: number;
-    width: number;
-    type?: string;
-    subtype?: string;
-    caption: string;
-    copyright?: string;
-  }>;
-  kicker?: string;
-  
-  // Top Stories API specific fields
-  uuid?: string;
-  categories?: string[];
-  section?: string;
-  subsection?: string;
-  byline?: string;
-  des_facet?: string[];
-  org_facet?: string[];
-  per_facet?: string[];
-  geo_facet?: string[];
-  item_type?: string;
-  updated_date?: string;
-  created_date?: string;
-
-  // Article Search API specific fields
-  abstract?: string;
-  web_url?: string;
-  headline?: {
-    main: string;
-    kicker?: string;
-    print_headline?: string;
-  };
-  pub_date?: string;
-  section_name?: string;
-  byline_original?: string;
-  snippet?: string;
-  keywords?: Array<{
-    name: string;
-    value: string;
-    rank: number;
-  }>;
-  news_desk?: string;
-  subsection_name?: string;
-  type_of_material?: string;
-  word_count?: number;
-  document_type?: string;
-  _id?: string;
-  uri?: string;
-}
+import CategoryFilter from '@/components/CategoryFilter';
+import { fetchTopHeadlines, NewsArticle } from '@/services/newsService';
 
 interface NYTArticleSearch {
   headline: {
@@ -106,10 +49,11 @@ export default function NewsPage() {
   const { isDarkMode } = useTheme();
   const router = useRouter();
   const [articles, setArticles] = useState<NewsArticle[]>([]);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [inputValue, setInputValue] = useState('');
-  const [isLoading, setIsLoading] = useState(true);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState('world');
+  const [inputValue, setInputValue] = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
   const [offset, setOffset] = useState(0);
   const [hasMore, setHasMore] = useState(true);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
@@ -128,80 +72,27 @@ export default function NewsPage() {
     if (node) observer.current.observe(node);
   }, [isLoadingMore, hasMore]);
 
-  const fetchNews = useCallback(async (currentOffset: number, isNewSearch: boolean = false) => {
+  const fetchNews = useCallback(async (category: string) => {
+    setLoading(true);
+    setError(null);
     try {
-      if (isNewSearch) {
-        setIsLoading(true);
-      } else {
-        setIsLoadingMore(true);
-      }
-
-      const url = `https://api.nytimes.com/svc/search/v2/articlesearch.json?q=${searchQuery}&api-key=${API_KEY}&page=${currentOffset}`;
-      
-      const response = await fetch(url);
-      
-      if (!response.ok) {
-        throw new Error('Failed to fetch news articles');
-      }
-      
-      const data = await response.json();
-      const newArticles = data.response.docs.map((article: NYTArticleSearch) => ({
-        title: article.headline.main,
-        description: article.abstract,
-        url: article.web_url,
-        published_at: article.pub_date,
-        source: article.source,
-        multimedia: article.multimedia ? [{
-          url: article.multimedia.thumbnail?.url || '',
-          height: article.multimedia.thumbnail?.height || 0,
-          width: article.multimedia.thumbnail?.width || 0,
-          caption: article.multimedia.caption || '',
-          copyright: article.multimedia.credit || ''
-        }] : undefined,
-        kicker: article.headline.kicker,
-        abstract: article.abstract,
-        web_url: article.web_url,
-        headline: article.headline,
-        pub_date: article.pub_date,
-        section_name: article.section_name,
-        byline_original: article.byline?.original,
-        snippet: article.snippet,
-        keywords: article.keywords,
-        news_desk: article.news_desk,
-        subsection_name: article.subsection_name,
-        type_of_material: article.type_of_material,
-        word_count: article.word_count,
-        document_type: article.document_type,
-        _id: article._id,
-        uri: article.uri
-      }));
-      
-      if (isNewSearch) {
-        setArticles(newArticles);
-      } else {
-        setArticles(prevArticles => [...prevArticles, ...newArticles]);
-      }
-      
-      setHasMore(newArticles.length === LIMIT);
-      setIsLoading(false);
-      setIsLoadingMore(false);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred');
-      setIsLoading(false);
-      setIsLoadingMore(false);
+      const response = await fetchTopHeadlines(category);
+      setArticles(response.results);
+    } catch (error) {
+      setError('Failed to fetch news articles. Please try again later.');
+      console.error('Error fetching news:', error);
+    } finally {
+      setLoading(false);
     }
-  }, [searchQuery, API_KEY, LIMIT]);
+  }, []);
 
   useEffect(() => {
-    setOffset(0);
-    fetchNews(0, true);
-  }, [searchQuery, fetchNews]);
+    fetchNews(selectedCategory);
+  }, [selectedCategory, fetchNews]);
 
-  useEffect(() => {
-    if (offset > 0) {
-      fetchNews(offset);
-    }
-  }, [offset, fetchNews]);
+  const handleCategoryChange = (category: string) => {
+    setSelectedCategory(category);
+  };
 
   const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -222,12 +113,12 @@ export default function NewsPage() {
 
   const handleArticleClick = (article: NewsArticle) => {
     router.push({
-      pathname: `/news/${encodeURIComponent(article.web_url || article.url)}`,
+      pathname: `/news/${encodeURIComponent(article.url)}`,
       query: { article: encodeURIComponent(JSON.stringify(article)) }
     });
   };
 
-  if (isLoading) {
+  if (loading) {
     return (
       <Layout>
         <div className={`${isDarkMode ? 'bg-gray-900' : 'bg-gray-100'} min-h-screen py-5 transition-colors duration-200`}>
@@ -263,154 +154,82 @@ export default function NewsPage() {
   }
 
   return (
-    <Layout>
-      <div className={`${isDarkMode ? 'bg-gray-900' : 'bg-gray-100'} min-h-screen py-5 transition-colors duration-200`}>
-        <div className="container mx-auto px-4 max-w-6xl">
-          <div className="flex justify-between items-center mb-6">
-            <h1 className={`text-2xl font-bold ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>Latest News</h1>
+    <Layout
+      showCategoryNav={true}
+      selectedCategory={selectedCategory}
+      onCategoryChange={handleCategoryChange}
+    >
+      <div className={`${isDarkMode ? 'bg-gray-900' : 'bg-gray-50'} min-h-screen py-8 transition-colors duration-200`}>
+        <div className="container mx-auto px-4 max-w-7xl">
+          <div className="flex justify-between items-center mb-8">
+            <h1 className={`text-4xl font-extrabold tracking-tight ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+              Latest News
+            </h1>
           </div>
+          <AdUnit className="my-10" />
 
-          <form onSubmit={handleSearch} className="mb-6">
-            <div className="flex gap-2">
-              <input
-                type="text"
-                name="search"
-                value={inputValue}
-                onChange={(e) => setInputValue(e.target.value)}
-                onKeyPress={handleKeyPress}
-                onBlur={() => setSearchQuery(inputValue)}
-                placeholder="Search news..."
-                className={`flex-1 px-4 py-2 rounded-md border ${
-                  isDarkMode 
-                    ? 'bg-gray-800 border-gray-700 text-white placeholder-gray-400' 
-                    : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
-                } focus:outline-none focus:ring-2 focus:ring-blue-500`}
-              />
-              <button
-                type="submit"
-                disabled={!inputValue.trim()}
-                className={`px-4 py-2 rounded-md ${
-                  isDarkMode 
-                    ? 'bg-blue-600 hover:bg-blue-700 text-white disabled:bg-gray-600 disabled:cursor-not-allowed' 
-                    : 'bg-blue-600 hover:bg-blue-700 text-white disabled:bg-gray-400 disabled:cursor-not-allowed'
-                } transition-colors`}
-              >
-                Search
-              </button>
-            </div>
-          </form>
-          <AdUnit className="my-8" />
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {articles.map((article, index) => (
-              <article
-                key={article.web_url || article.url || index}
-                ref={index === articles.length - 1 ? lastArticleElementRef : null}
-                onClick={() => handleArticleClick(article)}
-                className={`${
-                  isDarkMode ? 'bg-gray-800' : 'bg-white'
-                } rounded-lg shadow-md overflow-hidden transition-colors duration-200 cursor-pointer`}
-              >
-                {article.multimedia?.[0]?.url && (
-                  <div className="relative w-full h-48">
-                    <Image
-                      src={article.multimedia[0].url}
-                      alt={article.multimedia[0].caption || article.title}
-                      fill
-                      className="object-cover"
-                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                    />
-                    {article.multimedia[0].caption && (
-                      <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white p-2">
-                        <p className="text-xs">{article.multimedia[0].caption}</p>
-                        {article.multimedia[0].copyright && (
-                          <p className="text-xs mt-1 opacity-75">{article.multimedia[0].copyright}</p>
-                        )}
-                      </div>
-                    )}
+          {loading ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {[...Array(6)].map((_, index) => (
+                <div key={index} className="animate-pulse">
+                  <div className="bg-gray-200 dark:bg-gray-700 h-48 rounded-lg mb-4"></div>
+                  <div className="space-y-3">
+                    <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-3/4"></div>
+                    <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded"></div>
+                    <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-5/6"></div>
                   </div>
-                )}
-                
-                <div className="p-4">
-                  {(article.kicker || article.headline?.kicker) && (
-                    <p className={`text-sm font-medium mb-1 ${
-                      isDarkMode ? 'text-blue-400' : 'text-blue-600'
-                    }`}>
-                      {article.headline?.kicker || article.kicker}
-                    </p>
+                </div>
+              ))}
+            </div>
+          ) : error ? (
+            <div className={`text-center py-8 ${isDarkMode ? 'text-red-400' : 'text-red-600'}`}>
+              {error}
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {articles.map((article) => (
+                <div
+                  key={article.url}
+                  onClick={() => handleArticleClick(article)}
+                  className={`cursor-pointer group ${
+                    isDarkMode ? 'bg-gray-800' : 'bg-white'
+                  } rounded-lg overflow-hidden shadow-lg transition-all duration-200 hover:shadow-xl`}
+                >
+                  {article.multimedia && article.multimedia.length > 0 && (
+                    <div className="relative h-48">
+                      <Image
+                        src={article.multimedia[0].url}
+                        alt={article.title}
+                        fill
+                        className="object-cover"
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                      />
+                    </div>
                   )}
-                  <h2 className={`text-lg font-semibold mb-2 ${
-                    isDarkMode ? 'text-white' : 'text-gray-800'
-                  }`}>
-                    {article.headline?.main || article.title}
-                  </h2>
-                  {(article.abstract || article.description) && (
+                  <div className="p-6">
+                    {article.kicker && (
+                      <span className="text-sm font-semibold text-blue-600 dark:text-blue-400 mb-2 block">
+                        {article.kicker}
+                      </span>
+                    )}
+                    <h2 className={`text-xl font-bold mb-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors ${
+                      isDarkMode ? 'text-white' : 'text-gray-900'
+                    }`}>
+                      {article.title}
+                    </h2>
                     <p className={`text-sm mb-4 ${
                       isDarkMode ? 'text-gray-300' : 'text-gray-600'
                     }`}>
-                      {article.abstract || article.description}
+                      {article.abstract}
                     </p>
-                  )}
-                  <div className="flex justify-between items-center text-xs">
-                    <span className={`${
-                      isDarkMode ? 'text-gray-400' : 'text-gray-500'
-                    }`}>
-                      {article.section_name || article.section}
-                    </span>
-                    <span className={`${
-                      isDarkMode ? 'text-gray-400' : 'text-gray-500'
-                    }`}>
-                      {new Date(article.pub_date || article.published_at).toLocaleDateString()}
-                    </span>
+                    <div className="flex items-center text-xs text-gray-500 dark:text-gray-400">
+                      <span>{article.byline}</span>
+                      <span className="mx-2">•</span>
+                      <span>{new Date(article.published_date).toLocaleDateString()}</span>
+                    </div>
                   </div>
-                  {(article.byline_original || article.byline) && (
-                    <p className={`text-xs mt-2 ${
-                      isDarkMode ? 'text-gray-400' : 'text-gray-500'
-                    }`}>
-                      {article.byline_original || article.byline}
-                    </p>
-                  )}
-                  <button
-                    className={`mt-4 inline-block ${
-                      isDarkMode 
-                        ? 'text-blue-400 hover:text-blue-300' 
-                        : 'text-blue-600 hover:text-blue-800'
-                    } text-sm font-medium transition-colors`}
-                  >
-                    Read More →
-                  </button>
                 </div>
-              </article>
-            ))}
-          </div>
-
-          {isLoadingMore && (
-            <div className="text-center mt-6">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto"></div>
-              <p className={`mt-2 text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>Loading more articles...</p>
-            </div>
-          )}
-
-          {!hasMore && articles.length > 0 && (
-            <div className={`text-center mt-6 ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-              No more articles to load
-            </div>
-          )}
-
-          {articles.length === 0 && !isLoading && (
-            <div className={`${
-              isDarkMode ? 'bg-gray-800' : 'bg-white'
-            } rounded-md shadow-sm p-6 text-center transition-colors duration-200`}>
-              <h3 className={`text-lg font-semibold ${
-                isDarkMode ? 'text-white' : 'text-gray-800'
-              } mb-2`}>
-                No articles found
-              </h3>
-              <p className={`${
-                isDarkMode ? 'text-gray-300' : 'text-gray-600'
-              } mb-4 text-sm`}>
-                Try adjusting your search query
-              </p>
+              ))}
             </div>
           )}
         </div>

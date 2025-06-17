@@ -9,7 +9,7 @@ export default function Footer() {
       <div className="container mx-auto px-4 max-w-6xl">
         <div className="flex flex-col md:flex-row justify-between items-center">
           <div className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} mb-4 md:mb-0`}>
-            © {new Date().getFullYear()} Global Scholarships. All rights reserved.
+            © {new Date().getFullYear()} Global News. All rights reserved.
           </div>
           <div className="flex gap-6">
             <Link 
@@ -29,6 +29,12 @@ export default function Footer() {
               className={`text-sm ${isDarkMode ? 'text-gray-400 hover:text-gray-300' : 'text-gray-600 hover:text-gray-800'} transition-colors`}
             >
               Cookie Policy
+            </Link>
+            <Link 
+              href="/publisher-policies"
+              className={`text-sm ${isDarkMode ? 'text-gray-400 hover:text-gray-300' : 'text-gray-600 hover:text-gray-800'} transition-colors`}
+            >
+              Publisher Policies
             </Link>
           </div>
         </div>

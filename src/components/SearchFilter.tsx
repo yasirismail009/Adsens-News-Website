@@ -47,7 +47,7 @@ const SearchFilter: React.FC<SearchFilterProps> = ({ onSearch, onFilterChange, i
         <div className="flex">
           <input
             type="text"
-            placeholder="Search scholarships..."
+            placeholder="Search news..."
             className={`flex-grow px-3 py-1.5 text-sm ${
               isDarkMode 
                 ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400 focus:ring-blue-500 focus:border-blue-500' 

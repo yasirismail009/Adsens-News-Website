@@ -18,7 +18,7 @@ export default function About() {
                 Our Mission
               </h2>
               <p className="mb-4">
-                At Global Scholarships, we are dedicated to connecting students with educational opportunities worldwide. Our mission is to make quality education accessible to everyone by providing comprehensive information about scholarships, grants, and educational programs.
+                At Global News, we are dedicated to providing comprehensive and accurate news coverage from around the world. Our mission is to keep our readers informed with the latest updates and information across various topics and regions.
               </p>
             </section>
 
@@ -30,7 +30,7 @@ export default function About() {
                 We provide:
               </p>
               <ul className="list-disc pl-6 space-y-2">
-                <li>Up-to-date information on scholarships and grants</li>
+                <li>Up-to-date information on global events and news</li>
                 <li>Educational news and updates</li>
                 <li>Guidance on application processes</li>
                 <li>Resources for international students</li>
@@ -42,7 +42,7 @@ export default function About() {
                 Our Team
               </h2>
               <p className="mb-4">
-                Our team consists of education professionals, former scholarship recipients, and dedicated researchers who are passionate about helping students achieve their academic goals.
+                Our team consists of experienced journalists, editors, and researchers who are passionate about delivering accurate and timely news coverage.
               </p>
             </section>
 
@@ -52,8 +52,8 @@ export default function About() {
               </h2>
               <p>
                 Have questions or need assistance? Reach out to us at{' '}
-                <a href="mailto:contact@globalscholarships.com" className="text-blue-500 hover:text-blue-600">
-                  contact@globalscholarships.com
+                <a href="mailto:contact@globalnews.com" className="text-blue-500 hover:text-blue-600">
+                  contact@globalnews.com
                 </a>
               </p>
             </section>

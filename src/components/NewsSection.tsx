@@ -15,10 +15,8 @@ const NewsSection: React.FC<NewsSectionProps> = ({ articles, loading, error }) =
   const { isDarkMode } = useTheme();
 
   const handleArticleClick = (article: NewsArticle) => {
-    router.push({
-      pathname: `/news/${encodeURIComponent(article.url)}`,
-      query: { article: encodeURIComponent(JSON.stringify(article)) }
-    });
+    localStorage.setItem('currentArticle', JSON.stringify(article));
+    router.push(`/news/${encodeURIComponent(article.url)}`);
   };
 
   if (loading) {

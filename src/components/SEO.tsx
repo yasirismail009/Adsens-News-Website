@@ -17,21 +17,21 @@ interface SEOProps {
 }
 
 const SEO = ({
-  title = 'Global Scholarships - Latest Scholarship News and Opportunities',
-  description = 'Stay updated with the latest scholarship news, opportunities, and educational resources from around the world. Find scholarships for students, researchers, and professionals.',
-  image = 'https://globalscholarships.com/og-image.jpg',
+  title = 'Global News - Latest Updates and Information',
+  description = 'Stay updated with the latest news, information, and resources from around the world.',
+  image = 'https://globalnews.com/og-image.jpg',
   article = false,
   publishedTime,
   modifiedTime,
-  authors = ['Global Scholarships Team'],
-  tags = ['scholarships', 'education', 'news', 'opportunities'],
+  authors = ['Global News Team'],
+  tags = ['news', 'updates', 'information'],
   section,
-  keywords = ['scholarships', 'education', 'news', 'opportunities', 'study abroad'],
+  keywords = ['news', 'updates', 'information', 'global'],
   noindex = false,
   nofollow = false,
 }: SEOProps) => {
   const router = useRouter();
-  const canonicalUrl = `https://globalscholarships.com${router.asPath}`;
+  const canonicalUrl = `https://globalnews.com${router.asPath}`;
 
   return (
     <Head>
@@ -53,7 +53,7 @@ const SEO = ({
       <meta property="og:title" content={title} />
       <meta property="og:description" content={description} />
       <meta property="og:image" content={image} />
-      <meta property="og:site_name" content="Global Scholarships" />
+      <meta property="og:site_name" content="Global News" />
       <meta property="og:locale" content="en_US" />
 
       {/* Twitter */}
@@ -62,8 +62,8 @@ const SEO = ({
       <meta name="twitter:title" content={title} />
       <meta name="twitter:description" content={description} />
       <meta name="twitter:image" content={image} />
-      <meta name="twitter:site" content="@globalscholarships" />
-      <meta name="twitter:creator" content="@globalscholarships" />
+      <meta name="twitter:site" content="@globalnews" />
+      <meta name="twitter:creator" content="@globalnews" />
 
       {/* Article Specific Meta Tags */}
       {article && (
@@ -102,10 +102,10 @@ const SEO = ({
             url: canonicalUrl,
             publisher: {
               '@type': 'Organization',
-              name: 'Global Scholarships',
+              name: 'Global News',
               logo: {
                 '@type': 'ImageObject',
-                url: 'https://globalscholarships.com/logo.png'
+                url: 'https://globalnews.com/logo.png'
               }
             },
             ...(article && {

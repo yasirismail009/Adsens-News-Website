@@ -71,8 +71,8 @@ export default function PrivacyPolicy() {
               </h2>
               <p>
                 If you have any questions about this Privacy Policy, please contact us at{' '}
-                <a href="mailto:privacy@globalscholarships.com" className="text-blue-500 hover:text-blue-600">
-                  privacy@globalscholarships.com
+                <a href="mailto:privacy@globalnews.com" className="text-blue-500 hover:text-blue-600">
+                  privacy@globalnews.com
                 </a>
               </p>
             </section>
