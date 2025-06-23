@@ -54,15 +54,19 @@ export interface TopStoriesResponse {
 // Google AdSense Types
 declare global {
   interface Window {
-    adsbygoogle: any[];
+    adsbygoogle: Array<Record<string, unknown>>;
   }
 }
 
 export interface AdSenseConfig {
-  adClient: string;
-  adSlot: string;
-  adFormat: string;
-  fullWidthResponsive: boolean;
+  'data-ad-client': string;
+  'data-ad-slot': string;
+  'data-ad-format': string;
+  'data-full-width-responsive': string;
+}
+
+export interface AdSenseWindow extends Window {
+  adsbygoogle: Array<Record<string, unknown>>;
 }
 
 export interface CookieConsent {

@@ -67,7 +67,7 @@ export const fetchNYTRssFeed = async (section: NYTRssSection): Promise<NYTRssRes
       parseAttributeValue: true,
       parseTagValue: true,
       trimValues: true,
-      isArray: (name, jpath, isLeafNode, isAttribute) => {
+      isArray: (name) => {
         return name === 'item' || name === 'category' || name === 'media:content';
       }
     });

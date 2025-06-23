@@ -18,7 +18,7 @@ export default function PrivacyPolicy() {
                 Introduction
               </h2>
               <p className="mb-4">
-                This Privacy Policy describes how Global Scholarships ("we," "our," or "us") collects, uses, and shares information about you when you visit our website. This policy applies to all platforms, surfaces, and properties where we operate, including web, mobile applications, and other digital services.
+                This Privacy Policy describes how Global Scholarships (&quot;we,&quot; &quot;our,&quot; or &quot;us&quot;) collects, uses, and shares information about you when you visit our website. This policy applies to all platforms, surfaces, and properties where we operate, including web, mobile applications, and other digital services.
               </p>
               <p className="mb-4">
                 <strong>Last updated:</strong> {new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
@@ -74,7 +74,7 @@ export default function PrivacyPolicy() {
                   rel="noopener noreferrer" 
                   className="text-blue-500 hover:text-blue-600"
                 >
-                  Google's Ads Settings
+                  Google&apos;s Ads Settings
                 </a>
                 {' '}or the{' '}
                 <a 
@@ -88,14 +88,14 @@ export default function PrivacyPolicy() {
                 .
               </p>
               <p className="mb-4">
-                For more information about how Google uses data when you use our partners' sites or apps, visit{' '}
+                For more information about how Google uses data when you use our partners&apos; sites or apps, visit{' '}
                 <a 
                   href="https://policies.google.com/technologies/partner-sites" 
                   target="_blank" 
                   rel="noopener noreferrer" 
                   className="text-blue-500 hover:text-blue-600"
                 >
-                  How Google uses data when you use our partners' sites or apps
+                  How Google uses data when you use our partners&apos; sites or apps
                 </a>
                 .
               </p>
@@ -111,7 +111,7 @@ export default function PrivacyPolicy() {
               <ul className="list-disc pl-6 space-y-2 mb-4">
                 <li>Retrieve and display news articles and related content</li>
                 <li>Track article views and engagement metrics</li>
-                <li>Ensure compliance with The New York Times' terms of service</li>
+                <li>Ensure compliance with The New York Times&apos; terms of service</li>
                 <li>Improve the quality and relevance of news content</li>
               </ul>
               <p>
@@ -206,7 +206,7 @@ export default function PrivacyPolicy() {
 
             <section>
               <h2 className={`text-xl font-semibold mb-4 ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>
-                Children's Privacy
+                Children&apos;s Privacy
               </h2>
               <p>
                 Our website is not directed to children under 13 years of age. We do not knowingly collect personal information from children under 13. If you are a parent or guardian and believe your child has provided us with personal information, please contact us immediately.
@@ -218,7 +218,7 @@ export default function PrivacyPolicy() {
                 Changes to This Policy
               </h2>
               <p>
-                We may update this Privacy Policy from time to time. We will notify you of any material changes by posting the new Privacy Policy on this page and updating the "Last updated" date.
+                We may update this Privacy Policy from time to time. We will notify you of any material changes by posting the new Privacy Policy on this page and updating the &quot;Last updated&quot; date.
               </p>
             </section>
 

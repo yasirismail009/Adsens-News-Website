@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { fetchNYTRssFeed, NYTRssItem } from '../services/nytRssService';
+import type { NYTRssSection } from '../services/nytRssService';
 import { useTheme } from '../contexts/ThemeContext';
 import Image from 'next/image';
 import NYTRssSelector from './NYTRssSelector';
-import type { NYTRssSection } from './NYTRssSelector';
 
-const NYTRssSection: React.FC = () => {
+const NYTRssSectionComponent: React.FC = () => {
   const [selectedSection, setSelectedSection] = useState<NYTRssSection>('HomePage');
   const [items, setItems] = useState<NYTRssItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -173,4 +173,4 @@ const NYTRssSection: React.FC = () => {
   );
 };
 
-export default NYTRssSection; 
+export default NYTRssSectionComponent; 

@@ -1,109 +1,49 @@
 import React, { useState } from 'react';
 import { useTheme } from '../contexts/ThemeContext';
+import type { NYTRssSection } from '../services/nytRssService';
 
-// Define the section type
-type SectionName = 
-  | 'HomePage' | 'Latest News' | 'Most Read' | 'MostEmailed' | 'MostShared' | 'MostViewed'
-  | 'World' | 'Politics' | 'US' | 'Africa' | 'Americas' | 'AsiaPacific' | 'Europe' | 'MiddleEast'
-  | 'Business' | 'Tech' | 'Economy' | 'EnergyEnvironment' | 'DealBook' | 'MediaandAdvertising'
-  | 'SmallBusiness' | 'YourMoney' | 'PersonalTech'
-  | 'Science' | 'Health' | 'Climate' | 'Space' | 'Well'
-  | 'Arts' | 'ArtandDesign' | 'Books' | 'Dance' | 'Movies' | 'Music' | 'Television' | 'Theater'
-  | 'Style' | 'Food' | 'Travel' | 'Magazine' | 'TMagazine' | 'FashionandStyle' | 'DiningandWine' | 'Weddings'
-  | 'Sports' | 'Baseball' | 'ProBasketball' | 'ProFootball' | 'CollegeBasketball' | 'CollegeFootball'
-  | 'Golf' | 'Hockey' | 'Soccer' | 'Tennis'
-  | 'Opinion' | 'Education' | 'Jobs' | 'NYRegion' | 'RealEstate' | 'SundayBookReview'
-  | 'Sunday-Review' | 'Upshot' | 'Obituaries' | 'Lens';
-
-// Define categories and their sections
-const SECTION_CATEGORIES: Record<string, SectionName[]> = {
+// Define categories and their sections using the correct NYTRssSection type
+const SECTION_CATEGORIES: Record<string, NYTRssSection[]> = {
   'News': [
     'HomePage',
-    'Latest News',
-    'Most Read',
-    'MostEmailed',
-    'MostShared',
-    'MostViewed',
   ],
   'World & Politics': [
     'World',
     'Politics',
     'US',
-    'Africa',
-    'Americas',
-    'AsiaPacific',
-    'Europe',
-    'MiddleEast',
+    'NYRegion',
   ],
-  'Business & Tech': [
+  'Business & Opinion': [
     'Business',
-    'Tech',
-    'Economy',
-    'EnergyEnvironment',
-    'DealBook',
-    'MediaandAdvertising',
-    'SmallBusiness',
-    'YourMoney',
-    'PersonalTech',
+    'Opinion',
   ],
   'Science & Health': [
     'Science',
     'Health',
-    'Climate',
-    'Space',
-    'Well',
   ],
   'Arts & Culture': [
     'Arts',
-    'ArtandDesign',
     'Books',
-    'Dance',
     'Movies',
-    'Music',
-    'Television',
     'Theater',
   ],
   'Lifestyle': [
-    'Style',
+    'Fashion',
+    'Magazine',
     'Food',
     'Travel',
-    'Magazine',
-    'TMagazine',
-    'FashionandStyle',
-    'DiningandWine',
-    'Weddings',
+    'RealEstate',
   ],
   'Sports': [
     'Sports',
-    'Baseball',
-    'ProBasketball',
-    'ProFootball',
-    'CollegeBasketball',
-    'CollegeFootball',
-    'Golf',
-    'Hockey',
-    'Soccer',
-    'Tennis',
   ],
   'Other': [
-    'Opinion',
-    'Education',
-    'Jobs',
-    'NYRegion',
-    'RealEstate',
-    'SundayBookReview',
-    'Sunday-Review',
-    'Upshot',
+    'SundayReview',
+    'Automobiles',
     'Obituaries',
-    'Lens',
+    'Insider'
   ],
 };
-
-// Export the section type
-export type NYTRssSection = SectionName;
-
-// Extract all unique sections into a flat array
-const ALL_SECTIONS = Object.values(SECTION_CATEGORIES).flat();
 
 interface NYTRssSelectorProps {
   selectedSection: NYTRssSection;

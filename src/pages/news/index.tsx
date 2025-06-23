@@ -1,49 +1,10 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
-import Layout from '../../components/Layout';
-import { useTheme } from '../../contexts/ThemeContext';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/router';
+import Layout from '@/components/Layout';
+import { useTheme } from '@/contexts/ThemeContext';
 import Image from 'next/image';
 import AdUnit from '@/components/AdUnit';
-import CategoryFilter from '@/components/CategoryFilter';
 import { fetchTopHeadlines, NewsArticle } from '@/services/newsService';
-
-interface NYTArticleSearch {
-  headline: {
-    main: string;
-    kicker?: string;
-    print_headline?: string;
-  };
-  abstract: string;
-  web_url: string;
-  pub_date: string;
-  source: string;
-  multimedia?: {
-    thumbnail?: {
-      url: string;
-      height: number;
-      width: number;
-    };
-    caption?: string;
-    credit?: string;
-  };
-  byline?: {
-    original?: string;
-  };
-  section_name?: string;
-  snippet?: string;
-  keywords?: Array<{
-    name: string;
-    value: string;
-    rank: number;
-  }>;
-  news_desk?: string;
-  subsection_name?: string;
-  type_of_material?: string;
-  word_count?: number;
-  document_type?: string;
-  _id: string;
-  uri: string;
-}
 
 export default function NewsPage() {
   const { isDarkMode } = useTheme();
@@ -52,25 +13,6 @@ export default function NewsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedCategory, setSelectedCategory] = useState('world');
-  const [inputValue, setInputValue] = useState('');
-  const [searchQuery, setSearchQuery] = useState('');
-  const [offset, setOffset] = useState(0);
-  const [hasMore, setHasMore] = useState(true);
-  const [isLoadingMore, setIsLoadingMore] = useState(false);
-  const observer = useRef<IntersectionObserver | null>(null);
-  const LIMIT = 10;
-  const API_KEY = '0Xn3xkJ3eaMFx4l0tofdsWFLseOz9ok7';
-
-  const lastArticleElementRef = useCallback((node: HTMLDivElement | null) => {
-    if (isLoadingMore) return;
-    if (observer.current) observer.current.disconnect();
-    observer.current = new IntersectionObserver(entries => {
-      if (entries[0].isIntersecting && hasMore) {
-        setOffset(prevOffset => prevOffset + LIMIT);
-      }
-    });
-    if (node) observer.current.observe(node);
-  }, [isLoadingMore, hasMore]);
 
   const fetchNews = useCallback(async (category: string) => {
     setLoading(true);
@@ -92,23 +34,6 @@ export default function NewsPage() {
 
   const handleCategoryChange = (category: string) => {
     setSelectedCategory(category);
-  };
-
-  const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    if (inputValue.trim()) {
-      setSearchQuery(inputValue);
-      setOffset(0);
-      setHasMore(true);
-    }
-  };
-
-  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter' && inputValue.trim()) {
-      setSearchQuery(inputValue);
-      setOffset(0);
-      setHasMore(true);
-    }
   };
 
   const handleArticleClick = (article: NewsArticle) => {
@@ -166,7 +91,7 @@ export default function NewsPage() {
               Latest News
             </h1>
           </div>
-          <AdUnit className="my-10" />
+          <AdUnit className="my-10" uniqueId="news-page-top-ad" />
 
           {loading ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

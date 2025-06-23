@@ -3,6 +3,7 @@ import { useTheme } from '../contexts/ThemeContext';
 import Navbar from '../components/Navbar';
 import AdUnit from '../components/AdUnit';
 import { useRouter } from 'next/router';
+import Image from 'next/image';
 
 interface Article {
   uuid: string;
@@ -105,9 +106,11 @@ export default function AllNews() {
                         className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden"
                       >
                         {article.multimedia && article.multimedia.length > 0 && (
-                          <img
+                          <Image
                             src={article.multimedia[0].url}
                             alt={article.title}
+                            width={400}
+                            height={128}
                             className="object-cover w-full h-32"
                           />
                         )}
@@ -167,7 +170,7 @@ export default function AllNews() {
             </button>
           </form>
           <div className="hidden md:block ml-8">
-            <AdUnit className="w-64 h-20" />
+            <AdUnit className="w-64 h-20" uniqueId="all-news-newsletter-ad" />
           </div>
         </div>
       </div>

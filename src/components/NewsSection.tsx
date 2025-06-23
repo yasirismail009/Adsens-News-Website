@@ -84,7 +84,7 @@ const NewsSection: React.FC<NewsSectionProps> = ({ articles, loading, error }) =
                     {article.title}
                   </h3>
                   <p className={`mb-4 ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
-                    {article.description?.substring(0, 150)}...
+                    {article.abstract?.substring(0, 150)}...
                   </p>
                   <div className="space-y-2">
                     <div className={`flex flex-wrap gap-2 text-xs ${
@@ -107,7 +107,7 @@ const NewsSection: React.FC<NewsSectionProps> = ({ articles, loading, error }) =
                       isDarkMode ? 'text-gray-400' : 'text-gray-500'
                     }`}>
                       <span>{article.source}</span>
-                      <span>{new Date(article.published_at).toLocaleDateString()}</span>
+                      <span>{new Date(article.published_date).toLocaleDateString()}</span>
                     </div>
                   </div>
                 </div>

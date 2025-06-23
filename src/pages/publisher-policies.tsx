@@ -26,7 +26,7 @@ const PublisherPolicies = () => {
               </h2>
               <p className="mb-4">
                 Global Scholarships is committed to maintaining the highest standards of content quality and user experience. 
-                We adhere to Google's Publisher Policies to ensure a safe, trustworthy environment for our readers and advertisers.
+                We adhere to Google&apos;s Publisher Policies to ensure a safe, trustworthy environment for our readers and advertisers.
               </p>
             </section>
 
@@ -76,7 +76,7 @@ const PublisherPolicies = () => {
                 <ul className="list-disc pl-6 space-y-2">
                   <li>All ads are clearly labeled as advertisements</li>
                   <li>We do not allow ads that interfere with content consumption</li>
-                  <li>Ad placement follows Google's Better Ads Standards</li>
+                  <li>Ad placement follows Google&apos;s Better Ads Standards</li>
                   <li>We maintain a reasonable balance between content and advertisements</li>
                   <li>Ads are contextually relevant and appropriate for our audience</li>
                 </ul>

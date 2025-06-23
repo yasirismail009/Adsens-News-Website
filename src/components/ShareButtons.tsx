@@ -1,4 +1,5 @@
 import React from 'react';
+import Image from 'next/image';
 
 interface ShareButtonsProps {
   url: string;
@@ -29,9 +30,11 @@ const ShareButtons: React.FC<ShareButtonsProps> = ({ url, title }) => {
             className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
             aria-label={`Share on ${platform}`}
           >
-            <img
+            <Image
               src={`/icons/${platform}.svg`}
               alt={platform}
+              width={20}
+              height={20}
               className="w-5 h-5"
             />
           </a>

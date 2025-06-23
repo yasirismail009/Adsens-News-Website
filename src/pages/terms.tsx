@@ -18,7 +18,7 @@ export default function Terms() {
                 Acceptance of Terms
               </h2>
               <p className="mb-4">
-                By accessing and using Global Scholarships ("we," "our," or "us"), you accept and agree to be bound by the terms and provision of this agreement. 
+                By accessing and using Global Scholarships (&quot;we,&quot; &quot;our,&quot; or &quot;us&quot;), you accept and agree to be bound by the terms and provision of this agreement. 
                 If you do not agree to abide by the above, please do not use this service.
               </p>
               <p>
@@ -102,7 +102,7 @@ export default function Terms() {
               <ul className="list-disc pl-6 space-y-2">
                 <li>Advertisements may be displayed on our website</li>
                 <li>Google may use cookies and similar technologies for ad personalization</li>
-                <li>You can opt out of personalized advertising through Google's Ads Settings</li>
+                <li>You can opt out of personalized advertising through Google&apos;s Ads Settings</li>
                 <li>We maintain editorial independence from our advertisers</li>
               </ul>
             </section>
@@ -124,7 +124,7 @@ export default function Terms() {
                 Disclaimers and Limitations of Liability
               </h2>
               <p className="mb-4">
-                <strong>Disclaimer of Warranties:</strong> Our services are provided "as is" and "as available" without any warranties of any kind, either express or implied.
+                <strong>Disclaimer of Warranties:</strong> Our services are provided &quot;as is&quot; and &quot;as available&quot; without any warranties of any kind, either express or implied.
               </p>
               <p className="mb-4">
                 <strong>Limitation of Liability:</strong> In no event shall Global Scholarships be liable for any indirect, incidental, special, consequential, or punitive damages arising out of or relating to your use of our services.
@@ -172,7 +172,7 @@ export default function Terms() {
                 Changes to Terms
               </h2>
               <p className="mb-4">
-                We reserve the right to modify these Terms at any time. We will notify users of any material changes by posting the new Terms on this page and updating the "Last updated" date.
+                We reserve the right to modify these Terms at any time. We will notify users of any material changes by posting the new Terms on this page and updating the &quot;Last updated&quot; date.
               </p>
               <p>
                 Your continued use of our services after any changes constitutes acceptance of the new Terms.

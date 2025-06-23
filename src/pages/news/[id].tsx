@@ -55,36 +55,6 @@ const NewsDetail = () => {
     router.push('/news');
   };
 
-  // Helper function to get article title
-  const getArticleTitle = (article: NewsArticle) => {
-    return article.title;
-  };
-
-  // Helper function to get article description
-  const getArticleDescription = (article: NewsArticle) => {
-    return article.abstract;
-  };
-
-  // Helper function to get article URL
-  const getArticleUrl = (article: NewsArticle) => {
-    return article.url;
-  };
-
-  // Helper function to get article date
-  const getArticleDate = (article: NewsArticle) => {
-    return article.published_date;
-  };
-
-  // Helper function to get article author
-  const getArticleAuthor = (article: NewsArticle) => {
-    return article.byline;
-  };
-
-  // Helper function to get article section
-  const getArticleSection = (article: NewsArticle) => {
-    return article.section;
-  };
-
   if (isLoading) {
     return (
       <Layout>
@@ -151,7 +121,7 @@ const NewsDetail = () => {
             >
               ← Back to News
             </button>
-            <AdUnit className="my-8" />
+            <AdUnit className="my-8" uniqueId="news-article-content-ad" />
 
             <article className={`${isDarkMode ? 'bg-gray-800' : 'bg-white'} rounded-lg shadow-lg overflow-hidden`}>
               {article.multimedia?.[0]?.url && (

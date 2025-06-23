@@ -34,9 +34,9 @@ interface NYTArticle {
 interface NewsArticle {
   uuid: string;
   title: string;
-  description: string;
+  abstract: string;
   url: string;
-  published_at: string;
+  published_date: string;
   source: string;
   categories: string[];
   section?: string;
@@ -83,9 +83,9 @@ const Hero: React.FC<HeroProps> = ({ isDarkMode = false }) => {
           const transformedArticles = data.results.map((article: NYTArticle) => ({
             uuid: article.uri || article.url,
             title: article.title,
-            description: article.abstract,
+            abstract: article.abstract,
             url: article.url,
-            published_at: article.published_date,
+            published_date: article.published_date,
             source: article.byline || 'The New York Times',
             categories: article.des_facet || [],
             section: article.section,
@@ -166,12 +166,12 @@ const Hero: React.FC<HeroProps> = ({ isDarkMode = false }) => {
                 {mainArticle.title}
               </h2>
               <p className={`text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-200'}`}>
-                {mainArticle.description}
+                {mainArticle.abstract}
               </p>
               <div className="flex items-center mt-2 text-xs text-gray-300">
                 <span>{mainArticle.source}</span>
                 <span className="mx-2">•</span>
-                <span>{new Date(mainArticle.published_at).toLocaleDateString()}</span>
+                <span>{new Date(mainArticle.published_date).toLocaleDateString()}</span>
                 {mainArticle.geo_facet && mainArticle.geo_facet.length > 0 && (
                   <>
                     <span className="mx-2">•</span>
@@ -215,7 +215,7 @@ const Hero: React.FC<HeroProps> = ({ isDarkMode = false }) => {
                 <div className="flex items-center text-xs text-gray-500">
                   <span>{article.source}</span>
                   <span className="mx-1">•</span>
-                  <span>{new Date(article.published_at).toLocaleDateString()}</span>
+                  <span>{new Date(article.published_date).toLocaleDateString()}</span>
                   {article.geo_facet && article.geo_facet.length > 0 && (
                     <>
                       <span className="mx-1">•</span>

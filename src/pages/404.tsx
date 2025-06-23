@@ -10,8 +10,8 @@ export default function Custom404() {
         <div>
           <h1 className="text-9xl font-bold text-blue-600 dark:text-blue-400">404</h1>
           <h2 className="mt-6 text-3xl font-bold text-gray-900 dark:text-white">Page Not Found</h2>
-          <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
-            Sorry, we couldn't find the page you're looking for.
+          <p className="text-lg mb-8 text-gray-600 dark:text-gray-300">
+            We couldn&apos;t find the page you&apos;re looking for.
           </p>
         </div>
         <div className="flex flex-col space-y-4">

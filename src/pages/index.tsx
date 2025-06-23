@@ -1,47 +1,19 @@
-import React, { useEffect, useState } from 'react';
-import Layout from '../components/Layout';
-import Hero from '../components/Hero';
-import NewsSection from '../components/NewsSection';
+import React, { useEffect, useState, useCallback } from 'react';
 import NYTRssSection from '../components/NYTRssSection';
-import SEO from '../components/SEO';
 import AdUnit from '../components/AdUnit';
-import { useTheme } from '../contexts/ThemeContext';
-import { NewsArticle, NewsResponse } from '../services/newsService';
 import { fetchTopHeadlines } from '../services/newsService';
 import { useRouter } from 'next/router';
 import Navbar from '../components/Navbar';
 import { Article } from '../types';
-
-interface NewsItem {
-  uuid: string;
-  title: string;
-  abstract: string;
-  byline: string;
-  published_date: string;
-  created_date: string;
-  kicker: string;
-  source: string;
-  url?: string;
-  web_url?: string;
-  multimedia: {
-    url: string;
-    caption: string;
-    copyright: string;
-  }[];
-  des_facet: string[];
-  geo_facet: string[];
-  per_facet: string[];
-}
+import Image from 'next/image';
 
 const Home: React.FC = () => {
   const router = useRouter();
-  const { isDarkMode } = useTheme();
   const [currentSection, setCurrentSection] = useState('home');
   const [mainStory, setMainStory] = useState<Article | null>(null);
   const [newsGrid, setNewsGrid] = useState<Article[]>([]);
   const [newsInFocus, setNewsInFocus] = useState<Article[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
 
   const handleArticleClick = (article: Article) => {
     router.push({
@@ -50,11 +22,7 @@ const Home: React.FC = () => {
     });
   };
 
-  useEffect(() => {
-    fetchTopStories();
-  }, [currentSection]);
-
-  const fetchTopStories = async () => {
+  const fetchTopStories = useCallback(async () => {
     setLoading(true);
     try {
       const response = await fetchTopHeadlines(currentSection);
@@ -68,29 +36,11 @@ const Home: React.FC = () => {
       console.error('Error fetching top stories:', error);
     }
     setLoading(false);
-  };
+  }, [currentSection]);
 
-  // Main story data
-  const mainStoryData: NewsItem = {
-    uuid: "b8e792a9-b64e-52ab-93f7-46be32391471",
-    title: "With No Clear Off-Ramp, Israel's War With Iran May Last Weeks, Not Days",
-    abstract: "Israel and Iran both have little incentive to stop and no obvious route to outright victory. Much depends on President Trump.",
-    byline: "By Patrick Kingsley",
-    published_date: "2025-06-16T05:30:59-04:00",
-    created_date: "2025-06-16T05:30:59-04:00",
-    kicker: "News Analysis",
-    source: "The New York Times",
-    multimedia: [
-      {
-        url: "https://static01.nyt.com/images/2025/06/16/multimedia/16int-israel-iran-assess-lpzc/16int-israel-iran-assess-lpzc-superJumbo.jpg",
-        caption: "Damage from an Iranian missile attack in Rehovot, Israel, on Sunday morning.",
-        copyright: "Avishag Shaar-Yashuv for The New York Times"
-      }
-    ],
-    des_facet: ["War and Armed Conflicts", "Nuclear Weapons"],
-    geo_facet: ["Israel", "Iran", "Tehran (Iran)"],
-    per_facet: ["Trump, Donald J"]
-  };
+  useEffect(() => {
+    fetchTopStories();
+  }, [fetchTopStories]);
 
   // Bullet points based on the article's facets and abstract
   const bulletPoints = mainStory?.abstract
@@ -122,10 +72,12 @@ const Home: React.FC = () => {
                   {/* Main Image */}
                   {mainStory.multimedia && mainStory.multimedia.length > 0 && (
                     <div className="md:w-2/3 w-full h-80 relative rounded-lg overflow-hidden shadow-md">
-                      <img
+                      <Image
                         src={mainStory.multimedia[0].url}
                         alt={mainStory.title}
-                        className="object-cover w-full h-full"
+                        fill
+                        className="object-cover"
+                        sizes="(max-width: 768px) 100vw, 66vw"
                       />
                       <div className="absolute bottom-0 left-0 right-0 p-2 text-xs text-white bg-black bg-opacity-50">
                         {mainStory.multimedia[0].caption}
@@ -175,9 +127,11 @@ const Home: React.FC = () => {
                   className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden flex flex-col"
                 >
                   {article.multimedia && article.multimedia.length > 0 && (
-                    <img
+                    <Image
                       src={article.multimedia[0].url}
                       alt={article.title}
+                      width={400}
+                      height={160}
                       className="object-cover w-full h-40"
                     />
                   )}
@@ -214,7 +168,7 @@ const Home: React.FC = () => {
                 <button type="submit" className="bg-blue-600 text-white px-6 py-2 rounded-r-md font-semibold hover:bg-blue-700 transition-colors">Subscribe</button>
               </form>
               <div className="hidden md:block ml-8">
-                <AdUnit className="w-64 h-20" />
+                <AdUnit className="w-64 h-20" uniqueId="homepage-newsletter-ad" />
               </div>
             </div>
             {/* News in Focus */}
@@ -227,9 +181,11 @@ const Home: React.FC = () => {
                     className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden flex flex-col"
                   >
                     {article.multimedia && article.multimedia.length > 0 && (
-                      <img
+                      <Image
                         src={article.multimedia[0].url}
                         alt={article.title}
+                        width={400}
+                        height={128}
                         className="object-cover w-full h-32"
                       />
                     )}
@@ -260,7 +216,7 @@ const Home: React.FC = () => {
             {/* NYT RSS Feed */}
             <div className="mb-8">
               <h2 className="text-2xl font-bold mb-4 text-gray-900 dark:text-white">Latest from The New York Times</h2>
-              <NYTRssSection section="HomePage" />
+              <NYTRssSection />
             </div>
           </>
         )}

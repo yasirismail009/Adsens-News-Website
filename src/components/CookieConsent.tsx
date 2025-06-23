@@ -46,7 +46,7 @@ const CookieConsent = () => {
             <h3 className="font-semibold mb-2">We use cookies to enhance your experience</h3>
             <p className={`text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-600'} mb-3`}>
               We use cookies and similar technologies to provide personalized content, analyze site traffic, and display relevant advertisements. 
-              By clicking "Accept All", you consent to our use of cookies for these purposes.
+              By clicking &quot;Accept All&quot;, you consent to our use of cookies for these purposes.
             </p>
             
             {showDetails && (
@@ -66,7 +66,7 @@ const CookieConsent = () => {
                     rel="noopener noreferrer" 
                     className="text-blue-500 hover:text-blue-600"
                   >
-                    Google's Ads Settings
+                    Google&apos;s Ads Settings
                   </a>
                   .
                 </p>
