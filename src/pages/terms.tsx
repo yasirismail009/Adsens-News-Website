@@ -15,69 +15,187 @@ export default function Terms() {
           <div className={`space-y-6 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
             <section>
               <h2 className={`text-xl font-semibold mb-4 ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>
-                Third-Party Services
+                Acceptance of Terms
               </h2>
               <p className="mb-4">
-                Our website uses the following third-party services:
+                By accessing and using Global Scholarships ("we," "our," or "us"), you accept and agree to be bound by the terms and provision of this agreement. 
+                If you do not agree to abide by the above, please do not use this service.
               </p>
-              <ul className="list-disc pl-6 space-y-4">
-                <li>
-                  <strong>News API</strong>
-                  <p className="mt-2">
-                    We use the News API (https://newsapi.org) to provide news content. By using our service, you agree to comply with News API&apos;s terms of service. The News API is a third-party service that aggregates news articles from various sources. We do not control the content of the news articles, and we are not responsible for any inaccuracies or issues with the content provided by News API.
-                  </p>
-                </li>
-                <li>
-                  <strong>Google AdSense</strong>
-                  <p className="mt-2">
-                    We use Google AdSense to display advertisements. By using our service, you agree to comply with Google AdSense&apos;s terms of service. Google AdSense uses cookies to serve ads based on your prior visits to our website and other sites.
-                  </p>
-                </li>
-              </ul>
+              <p>
+                <strong>Last updated:</strong> {new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+              </p>
             </section>
 
             <section>
               <h2 className={`text-xl font-semibold mb-4 ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>
-                User Responsibilities
+                Description of Service
               </h2>
               <p className="mb-4">
-                By using our website, you agree to:
+                Global Scholarships provides educational news, scholarship information, and career guidance content. Our services include:
               </p>
               <ul className="list-disc pl-6 space-y-2">
-                <li>Provide accurate and complete information</li>
-                <li>Maintain the security of your account</li>
-                <li>Not use our services for any illegal purposes</li>
-                <li>Not attempt to interfere with our services</li>
-                <li>Comply with all applicable laws and regulations</li>
+                <li>News aggregation and reporting on educational topics</li>
+                <li>Scholarship and financial aid information</li>
+                <li>Career and academic guidance resources</li>
+                <li>Educational content and analysis</li>
+                <li>Newsletter and communication services</li>
               </ul>
             </section>
 
             <section>
               <h2 className={`text-xl font-semibold mb-4 ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>
-                Intellectual Property
+                User Conduct
               </h2>
+              <p className="mb-4">
+                You agree to use our services only for lawful purposes and in accordance with these Terms. You agree not to:
+              </p>
+              <ul className="list-disc pl-6 space-y-2">
+                <li>Use the service for any illegal or unauthorized purpose</li>
+                <li>Violate any applicable laws or regulations</li>
+                <li>Infringe upon the rights of others</li>
+                <li>Attempt to gain unauthorized access to our systems</li>
+                <li>Interfere with or disrupt the service</li>
+                <li>Submit false or misleading information</li>
+                <li>Use automated systems to access our services</li>
+              </ul>
+            </section>
+
+            <section>
+              <h2 className={`text-xl font-semibold mb-4 ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>
+                Intellectual Property Rights
+              </h2>
+              <p className="mb-4">
+                The content on this website, including but not limited to text, graphics, images, logos, and software, is the property of Global Scholarships or its content suppliers and is protected by copyright laws.
+              </p>
+              <p className="mb-4">
+                You may not reproduce, distribute, modify, or create derivative works from this content without our express written consent.
+              </p>
               <p>
-                All content on this website, including text, graphics, logos, and software, is the property of Global News or its content suppliers and is protected by international copyright laws. You may not reproduce, distribute, or create derivative works from this content without our express permission.
+                We respect the intellectual property rights of others and expect our users to do the same. If you believe your work has been copied in a way that constitutes copyright infringement, please contact us.
               </p>
             </section>
 
             <section>
               <h2 className={`text-xl font-semibold mb-4 ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>
-                Limitation of Liability
+                Third-Party Content and Services
               </h2>
+              <p className="mb-4">
+                Our website may contain links to third-party websites and services, including:
+              </p>
+              <ul className="list-disc pl-6 space-y-2 mb-4">
+                <li>The New York Times API for news content</li>
+                <li>Google AdSense for advertising services</li>
+                <li>Other educational and news sources</li>
+              </ul>
               <p>
-                Global News shall not be liable for any indirect, incidental, special, consequential, or punitive damages resulting from your use of or inability to use the service. We do not guarantee the accuracy, completeness, or usefulness of any information on the website.
+                We are not responsible for the content, privacy policies, or practices of any third-party websites or services. Your use of third-party services is at your own risk.
               </p>
             </section>
 
             <section>
               <h2 className={`text-xl font-semibold mb-4 ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>
-                Contact Us
+                Advertising and Monetization
+              </h2>
+              <p className="mb-4">
+                We use Google AdSense to display advertisements on our website. By using our services, you acknowledge that:
+              </p>
+              <ul className="list-disc pl-6 space-y-2">
+                <li>Advertisements may be displayed on our website</li>
+                <li>Google may use cookies and similar technologies for ad personalization</li>
+                <li>You can opt out of personalized advertising through Google's Ads Settings</li>
+                <li>We maintain editorial independence from our advertisers</li>
+              </ul>
+            </section>
+
+            <section>
+              <h2 className={`text-xl font-semibold mb-4 ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>
+                Privacy and Data Protection
+              </h2>
+              <p className="mb-4">
+                Your privacy is important to us. Our collection and use of personal information is governed by our Privacy Policy, which is incorporated into these Terms by reference.
+              </p>
+              <p>
+                By using our services, you consent to the collection and use of information as described in our Privacy Policy.
+              </p>
+            </section>
+
+            <section>
+              <h2 className={`text-xl font-semibold mb-4 ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>
+                Disclaimers and Limitations of Liability
+              </h2>
+              <p className="mb-4">
+                <strong>Disclaimer of Warranties:</strong> Our services are provided "as is" and "as available" without any warranties of any kind, either express or implied.
+              </p>
+              <p className="mb-4">
+                <strong>Limitation of Liability:</strong> In no event shall Global Scholarships be liable for any indirect, incidental, special, consequential, or punitive damages arising out of or relating to your use of our services.
+              </p>
+              <p>
+                <strong>Accuracy of Information:</strong> While we strive to provide accurate and up-to-date information, we cannot guarantee the accuracy, completeness, or timeliness of any content on our website.
+              </p>
+            </section>
+
+            <section>
+              <h2 className={`text-xl font-semibold mb-4 ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>
+                Indemnification
               </h2>
               <p>
-                If you have any questions about these Terms of Service, please contact us at{' '}
-                <a href="mailto:legal@globalnews.com" className="text-blue-500 hover:text-blue-600">
-                  legal@globalnews.com
+                You agree to indemnify and hold harmless Global Scholarships, its officers, directors, employees, and agents from and against any claims, damages, obligations, losses, liabilities, costs, or debt arising from your use of our services or violation of these Terms.
+              </p>
+            </section>
+
+            <section>
+              <h2 className={`text-xl font-semibold mb-4 ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>
+                Termination
+              </h2>
+              <p className="mb-4">
+                We may terminate or suspend your access to our services immediately, without prior notice, for any reason, including breach of these Terms.
+              </p>
+              <p>
+                Upon termination, your right to use our services will cease immediately, and we may delete any user data associated with your account.
+              </p>
+            </section>
+
+            <section>
+              <h2 className={`text-xl font-semibold mb-4 ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>
+                Governing Law and Jurisdiction
+              </h2>
+              <p className="mb-4">
+                These Terms shall be governed by and construed in accordance with the laws of the jurisdiction in which Global Scholarships operates, without regard to its conflict of law provisions.
+              </p>
+              <p>
+                Any disputes arising from these Terms or your use of our services shall be resolved in the courts of competent jurisdiction in our operating jurisdiction.
+              </p>
+            </section>
+
+            <section>
+              <h2 className={`text-xl font-semibold mb-4 ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>
+                Changes to Terms
+              </h2>
+              <p className="mb-4">
+                We reserve the right to modify these Terms at any time. We will notify users of any material changes by posting the new Terms on this page and updating the "Last updated" date.
+              </p>
+              <p>
+                Your continued use of our services after any changes constitutes acceptance of the new Terms.
+              </p>
+            </section>
+
+            <section>
+              <h2 className={`text-xl font-semibold mb-4 ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>
+                Severability
+              </h2>
+              <p>
+                If any provision of these Terms is found to be unenforceable or invalid, that provision will be limited or eliminated to the minimum extent necessary so that these Terms will otherwise remain in full force and effect.
+              </p>
+            </section>
+
+            <section>
+              <h2 className={`text-xl font-semibold mb-4 ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>
+                Contact Information
+              </h2>
+              <p>
+                If you have any questions about these Terms of Service, please contact us at:{' '}
+                <a href="mailto:legal@globalscholarships.com" className="text-blue-500 hover:text-blue-600">
+                  legal@globalscholarships.com
                 </a>
               </p>
             </section>

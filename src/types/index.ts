@@ -49,4 +49,29 @@ export interface TopStoriesResponse {
   last_updated: string;
   num_results: number;
   results: Article[];
+}
+
+// Google AdSense Types
+declare global {
+  interface Window {
+    adsbygoogle: any[];
+  }
+}
+
+export interface AdSenseConfig {
+  adClient: string;
+  adSlot: string;
+  adFormat: string;
+  fullWidthResponsive: boolean;
+}
+
+export interface CookieConsent {
+  type: 'all' | 'necessary' | 'advertising' | 'declined';
+  date: string;
+}
+
+export interface PrivacySettings {
+  analytics: boolean;
+  advertising: boolean;
+  necessary: boolean;
 } 

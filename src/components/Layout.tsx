@@ -1,7 +1,7 @@
 import { ReactNode, useState } from 'react';
 import Header from './Header';
 import Footer from './Footer';
-import CookieConsentBanner from './CookieConsent';
+import CookieConsent from './CookieConsent';
 import CategoryNavbar from './CategoryNavbar';
 import { useTheme } from '../contexts/ThemeContext';
 
@@ -33,7 +33,7 @@ const Layout: React.FC<LayoutProps> = ({
         {children}
       </main>
       <Footer />
-      <CookieConsentBanner />
+      <CookieConsent />
     </div>
   );
 };
